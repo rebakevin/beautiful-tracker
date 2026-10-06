@@ -177,11 +177,7 @@ class _CreateEditTaskScreenState extends State<CreateEditTaskScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final members = {
-      ..._teamMembers,
-      if (_assignee != null) _assignee!,
-    }.toList();
-
+    final members = {..._teamMembers, ?_assignee}.toList();
     return Scaffold(
       appBar: AppBar(
         title: Text(_isEditing ? 'Edit Task' : 'Create Task'),

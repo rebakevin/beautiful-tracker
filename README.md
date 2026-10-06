@@ -11,6 +11,14 @@ flutter pub get
 flutter run   # on an Android emulator / iOS simulator or a physical device
 ```
 
+No emulator? Run it in Chrome for development:
+
+```bash
+flutter run -d chrome
+```
+
+The graded demo must still run on an emulator or a physical device.
+
 ## Project structure
 
 ```
@@ -39,3 +47,8 @@ Data is stored locally with SQLite via `sqflite`. `DatabaseHelper` in
 `lib/data/local/database_helper.dart` opens a single shared database. To add or
 change tables, create them in `_onCreate`, bump `_version`, and add the
 migration in `_onUpgrade`.
+
+On web, `sqflite` has no browser implementation, so the helper switches to
+`sqflite_common_ffi_web`: a WebAssembly build of SQLite stored in the browser's
+IndexedDB. It uses `web/sqlite3.wasm` and `web/sqflite_sw.js`; to regenerate
+them after upgrading the package, run `dart run sqflite_common_ffi_web:setup`.

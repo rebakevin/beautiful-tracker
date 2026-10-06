@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 
 /// Single entry point to the local SQLite database.
 ///
@@ -21,6 +23,10 @@ class DatabaseHelper {
   }
 
   Future<Database> _open() async {
+    // sqflite has no browser implementation; on web it runs on a WebAssembly
+    // build of SQLite stored in IndexedDB (web/sqlite3.wasm, web/sqflite_sw.js).
+    if (kIsWeb) databaseFactory = databaseFactoryFfiWeb;
+
     final path = join(await getDatabasesPath(), _databaseName);
     return openDatabase(
       path,

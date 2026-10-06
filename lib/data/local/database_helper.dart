@@ -1,3 +1,4 @@
+import '../../features/tasks/data/task_table.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -12,7 +13,7 @@ class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._();
 
   static const _databaseName = 'beautiful_tracker.db';
-  static const _version = 1;
+  static const _version = 2;
 
   Database? _database;
 
@@ -37,11 +38,13 @@ class DatabaseHelper {
   }
 
   Future<void> _onCreate(Database db, int version) async {
-    // No tables yet.
+    await TaskTable.create(db);
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    // No migrations yet.
+    if (oldVersion < 2) {
+      await TaskTable.create(db);
+    }
   }
 
   Future<void> close() async {

@@ -1,6 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 
-/// SQL definition of the tasks table. 
+/// SQL definition of the tasks table.
 class TaskTable {
   TaskTable._();
 

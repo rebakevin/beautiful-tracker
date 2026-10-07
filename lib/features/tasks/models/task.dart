@@ -50,27 +50,27 @@ class Task {
 
   /// Converts the task into a row that SQLite can store.
   Map<String, Object?> toMap() => {
-        if (id != null) 'id': id,
-        'title': title,
-        'description': description,
-        'assignee': assignee,
-        'due_date': dueDate.toIso8601String(),
-        'priority': priority.name,
-        'status': status.name,
-        'sla_status': sla.name,
-      };
+    if (id != null) 'id': id,
+    'title': title,
+    'description': description,
+    'assignee': assignee,
+    'due_date': dueDate.toIso8601String(),
+    'priority': priority.name,
+    'status': status.name,
+    'sla_status': sla.name,
+  };
 
   /// Builds a task from a row read out of SQLite.
   factory Task.fromMap(Map<String, Object?> map) => Task(
-        id: map['id'] as int?,
-        title: map['title'] as String,
-        description: (map['description'] as String?) ?? '',
-        assignee: map['assignee'] as String,
-        dueDate: DateTime.parse(map['due_date'] as String),
-        priority: TaskPriority.values.byName(map['priority'] as String),
-        status: TaskStatus.values.byName(map['status'] as String),
-        sla: SlaStatus.values.byName(map['sla_status'] as String),
-      );
+    id: map['id'] as int?,
+    title: map['title'] as String,
+    description: (map['description'] as String?) ?? '',
+    assignee: map['assignee'] as String,
+    dueDate: DateTime.parse(map['due_date'] as String),
+    priority: TaskPriority.values.byName(map['priority'] as String),
+    status: TaskStatus.values.byName(map['status'] as String),
+    sla: SlaStatus.values.byName(map['sla_status'] as String),
+  );
 
   /// Returns a copy with some fields changed (used when editing).
   Task copyWith({
@@ -81,15 +81,14 @@ class Task {
     TaskPriority? priority,
     TaskStatus? status,
     SlaStatus? sla,
-  }) =>
-      Task(
-        id: id,
-        title: title ?? this.title,
-        description: description ?? this.description,
-        assignee: assignee ?? this.assignee,
-        dueDate: dueDate ?? this.dueDate,
-        priority: priority ?? this.priority,
-        status: status ?? this.status,
-        sla: sla ?? this.sla,
-      );
+  }) => Task(
+    id: id,
+    title: title ?? this.title,
+    description: description ?? this.description,
+    assignee: assignee ?? this.assignee,
+    dueDate: dueDate ?? this.dueDate,
+    priority: priority ?? this.priority,
+    status: status ?? this.status,
+    sla: sla ?? this.sla,
+  );
 }

@@ -6,7 +6,7 @@ import 'task_table.dart';
 
 class TaskRepository {
   TaskRepository({DatabaseHelper? helper})
-      : _helper = helper ?? DatabaseHelper.instance;
+    : _helper = helper ?? DatabaseHelper.instance;
 
   final DatabaseHelper _helper;
 

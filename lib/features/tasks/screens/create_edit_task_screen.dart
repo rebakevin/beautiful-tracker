@@ -4,25 +4,9 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../data/task_repository.dart';
 import '../models/task.dart';
+import '../utils/task_date.dart';
 
 const _teamMembers = ['Keira', 'Victor', 'Annie', 'Kevin'];
-
-const _months = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec',
-];
-
-String _formatDate(DateTime d) => '${d.day} ${_months[d.month - 1]} ${d.year}';
 
 /// Form used both to create a task and to edit an existing one.
 
@@ -60,7 +44,7 @@ class _CreateEditTaskScreenState extends State<CreateEditTaskScreen> {
     _description = TextEditingController(text: t?.description ?? '');
     _dueDate = t?.dueDate;
     _dateText = TextEditingController(
-      text: t == null ? '' : _formatDate(t.dueDate),
+      text: t == null ? '' : formatTaskDate(t.dueDate),
     );
     _assignee = t?.assignee;
     _priority = t?.priority ?? TaskPriority.medium;
@@ -88,7 +72,7 @@ class _CreateEditTaskScreenState extends State<CreateEditTaskScreen> {
     if (picked != null) {
       setState(() {
         _dueDate = picked;
-        _dateText.text = _formatDate(picked);
+        _dateText.text = formatTaskDate(picked);
       });
     }
   }

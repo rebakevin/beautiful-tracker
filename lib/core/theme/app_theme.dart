@@ -115,7 +115,7 @@ class AppTheme {
               foregroundColor: Colors.white,
               disabledBackgroundColor: AppColors.primary.withValues(alpha: 0.6),
               disabledForegroundColor: Colors.white,
-              minimumSize: const Size.fromHeight(52),
+              minimumSize: const Size(64, 48),
               shape: buttonShape,
               textStyle: buttonText,
             ).copyWith(
@@ -138,7 +138,7 @@ class AppTheme {
         style: OutlinedButton.styleFrom(
           backgroundColor: p.surface,
           foregroundColor: p.ink,
-          minimumSize: const Size.fromHeight(52),
+          minimumSize: const Size(64, 48),
           side: BorderSide(color: p.border, width: 1.5),
           shape: buttonShape,
           textStyle: buttonText,

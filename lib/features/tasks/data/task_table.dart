@@ -8,7 +8,7 @@ class TaskTable {
 
   static Future<void> create(Database db) async {
     await db.execute('''
-      CREATE TABLE $name (
+            CREATE TABLE IF NOT EXISTS $name (
         id          INTEGER PRIMARY KEY AUTOINCREMENT,
         title       TEXT NOT NULL,
         description TEXT NOT NULL DEFAULT '',

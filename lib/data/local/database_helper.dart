@@ -6,15 +6,19 @@ import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 /// Single entry point to the local SQLite database.
 ///
 /// The database is opened lazily on first access and the same instance is
-/// reused for the lifetime of the app. Tables are created in [_onCreate] and
-/// schema changes go through [_onUpgrade] by bumping [_version].
+/// reused for the lifetime of the app.
+///
+/// Schema changes are numbered migrations in [_migrations]. A fresh install
+/// runs all of them; an existing install runs only the ones newer than its
+/// stored version. To change the schema, add a migration and bump [_version]
+/// to match. Never edit a migration that has already been pushed.
 class DatabaseHelper {
   DatabaseHelper._();
 
   static final DatabaseHelper instance = DatabaseHelper._();
 
   static const _databaseName = 'beautiful_tracker.db';
-  static const _version = 1;
+  static const _version = 2;
 
   Database? _database;
 
@@ -42,13 +46,35 @@ class DatabaseHelper {
     await db.execute('PRAGMA foreign_keys = ON');
   }
 
-  Future<void> _onCreate(Database db, int version) async {
-    // No tables yet.
+  Future<void> _onCreate(Database db, int version) =>
+      _migrate(db, from: 1, to: version);
+
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) =>
+      _migrate(db, from: oldVersion + 1, to: newVersion);
+
+  Future<void> _migrate(
+    Database db, {
+    required int from,
+    required int to,
+  }) async {
+    for (var v = from; v <= to; v++) {
+      await _migrations[v]?.call(db);
+    }
   }
 
-  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    // No migrations yet.
-  }
+  /// Schema version -> change. Version 1 was the empty initial database.
+  static final Map<int, Future<void> Function(Database)> _migrations = {
+    2: (db) => db.execute('''
+      CREATE TABLE users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        email TEXT NOT NULL UNIQUE COLLATE NOCASE,
+        password_hash TEXT NOT NULL,
+        password_salt TEXT NOT NULL,
+        created_at TEXT NOT NULL
+      )
+    '''),
+  };
 
   Future<void> close() async {
     await _database?.close();

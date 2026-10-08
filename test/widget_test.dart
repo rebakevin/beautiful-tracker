@@ -23,6 +23,7 @@ void main() {
     await tester.tap(find.text('Members'));
     await tester.pumpAndSettle();
     expect(find.text('Team Members'), findsOneWidget);
+    expect(find.text('No members yet'), findsOneWidget);
 
     await tester.tap(find.text('Profile'));
     await tester.pumpAndSettle();

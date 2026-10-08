@@ -3,11 +3,14 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
+import 'add_member_screen.dart';
 import 'member.dart';
 import 'widgets/member_card.dart';
 
 class MembersScreen extends StatelessWidget {
-  const MembersScreen({super.key});
+  const MembersScreen({super.key, this.members = const []});
+
+  final List<Member> members;
 
   @override
   Widget build(BuildContext context) {
@@ -23,16 +26,18 @@ class MembersScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const _Header(),
+            _Header(memberCount: members.length),
             const SizedBox(height: AppSpacing.section),
             Expanded(
-              child: ListView.separated(
-                itemCount: sampleMembers.length,
-                separatorBuilder: (_, _) =>
-                    const SizedBox(height: AppSpacing.cardGap),
-                itemBuilder: (context, index) =>
-                    MemberCard(member: sampleMembers[index]),
-              ),
+              child: members.isEmpty
+                  ? const _EmptyMembersState()
+                  : ListView.separated(
+                      itemCount: members.length,
+                      separatorBuilder: (_, _) =>
+                          const SizedBox(height: AppSpacing.cardGap),
+                      itemBuilder: (context, index) =>
+                          MemberCard(member: members[index]),
+                    ),
             ),
           ],
         ),
@@ -42,7 +47,9 @@ class MembersScreen extends StatelessWidget {
 }
 
 class _Header extends StatelessWidget {
-  const _Header();
+  const _Header({required this.memberCount});
+
+  final int memberCount;
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +66,7 @@ class _Header extends StatelessWidget {
               ),
               const SizedBox(height: 2),
               Text(
-                '${sampleMembers.length} members',
+                '$memberCount members',
                 style: GoogleFonts.barlow(
                   fontSize: 14,
                   fontWeight: FontWeight.w400,
@@ -71,7 +78,13 @@ class _Header extends StatelessWidget {
         ),
         const SizedBox(width: AppSpacing.md),
         FilledButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => const AddMemberScreen(),
+              ),
+            );
+          },
           style: FilledButton.styleFrom(
             backgroundColor: AppColors.primary,
             foregroundColor: Colors.white,
@@ -91,6 +104,66 @@ class _Header extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _EmptyMembersState extends StatelessWidget {
+  const _EmptyMembersState();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 80,
+            height: 80,
+            decoration: const BoxDecoration(
+              color: AppColors.primaryTint,
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.people_outline,
+              size: 40,
+              color: AppColors.primary,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.section),
+          Text(
+            'No members yet',
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          Text(
+            'Add your first team member to get started',
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+          const SizedBox(height: AppSpacing.section),
+          FilledButton.icon(
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => const AddMemberScreen(),
+                ),
+              );
+            },
+            style: FilledButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+              shape: const StadiumBorder(),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.cardPadding,
+                vertical: 12,
+              ),
+            ),
+            icon: const Icon(Icons.add, size: 18),
+            label: const Text('Add member'),
+          ),
+        ],
+      ),
     );
   }
 }

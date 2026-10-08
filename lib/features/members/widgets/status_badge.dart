@@ -22,7 +22,7 @@ class StatusBadge extends StatelessWidget {
       child: Text(
         '$count ${status.label}',
         style: GoogleFonts.barlow(
-          fontSize: 12,
+          fontSize: 12.5,
           fontWeight: FontWeight.w600,
           color: status.foreground,
         ),

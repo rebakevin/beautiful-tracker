@@ -81,6 +81,9 @@ class FormPage extends StatelessWidget {
                   children: [
                     Expanded(
                       child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          minimumSize: const Size.fromHeight(52),
+                        ),
                         onPressed: saving
                             ? null
                             : () => Navigator.of(context).maybePop(),
@@ -91,6 +94,9 @@ class FormPage extends StatelessWidget {
                     Expanded(
                       flex: 2,
                       child: FilledButton(
+                        style: FilledButton.styleFrom(
+                          minimumSize: const Size.fromHeight(52),
+                        ),
                         onPressed: saving ? null : onSave,
                         child: saving
                             ? const SizedBox.square(

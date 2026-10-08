@@ -18,7 +18,7 @@ class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._();
 
   static const _databaseName = 'beautiful_tracker.db';
-  static const _version = 2;
+  static const _version = 3;
 
   Database? _database;
 
@@ -65,7 +65,15 @@ class DatabaseHelper {
   /// Schema version -> change. Version 1 was the empty initial database.
   static final Map<int, Future<void> Function(Database)> _migrations = {
     2: (db) => db.execute('''
-      CREATE TABLE users (
+      CREATE TABLE IF NOT EXISTS members (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        email TEXT NOT NULL,
+        initials TEXT NOT NULL
+      )
+    '''),
+    3: (db) => db.execute('''
+      CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
         email TEXT NOT NULL UNIQUE COLLATE NOCASE,

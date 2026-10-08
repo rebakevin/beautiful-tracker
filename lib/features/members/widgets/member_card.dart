@@ -60,7 +60,7 @@ class _Details extends StatelessWidget {
         Text(
           member.email,
           style: GoogleFonts.barlow(
-            fontSize: 13,
+            fontSize: 14,
             fontWeight: FontWeight.w400,
             color: AppColors.muted,
           ),

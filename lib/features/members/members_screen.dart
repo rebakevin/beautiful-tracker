@@ -93,7 +93,7 @@ class _MembersScreenState extends State<MembersScreen> {
     return ListView.separated(
       itemCount: _members.length,
       separatorBuilder: (_, _) =>
-          const SizedBox(height: AppSpacing.cardGap),
+          const SizedBox(height: AppSpacing.listGap),
       itemBuilder: (context, index) {
         final member = _members[index];
         return MemberCard(

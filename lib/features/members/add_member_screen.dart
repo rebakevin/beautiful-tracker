@@ -164,14 +164,14 @@ class _LabeledField extends StatelessWidget {
         Text(
           label,
           style: GoogleFonts.barlow(
-            fontSize: 13,
+            fontSize: 14,
             fontWeight: FontWeight.w600,
             color: AppColors.muted,
           ),
         ),
         const SizedBox(height: AppSpacing.sm),
         Container(
-          height: 60,
+          height: 52,
           decoration: BoxDecoration(
             color: AppColors.surface,
             borderRadius: BorderRadius.circular(AppRadius.field),
@@ -222,7 +222,7 @@ class _BottomBar extends StatelessWidget {
             children: [
               Expanded(
                 child: SizedBox(
-                  height: 60,
+                  height: 52,
                   child: OutlinedButton(
                     onPressed: saving ? null : onCancel,
                     style: OutlinedButton.styleFrom(
@@ -234,7 +234,7 @@ class _BottomBar extends StatelessWidget {
                       ),
                       textStyle: GoogleFonts.barlow(
                         fontSize: 16,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                     child: const Text('Cancel'),
@@ -245,7 +245,7 @@ class _BottomBar extends StatelessWidget {
               Expanded(
                 flex: 2,
                 child: SizedBox(
-                  height: 60,
+                  height: 52,
                   child: FilledButton(
                     onPressed: saving ? null : onSave,
                     style: FilledButton.styleFrom(
@@ -256,7 +256,7 @@ class _BottomBar extends StatelessWidget {
                       ),
                       textStyle: GoogleFonts.barlow(
                         fontSize: 16,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                     child: Text(saving ? 'Saving…' : 'Save'),

@@ -5,7 +5,7 @@ import '../../../core/theme/app_colors.dart';
 
 /// A butter-yellow circle with the member's initials in dark brown-olive.
 class MemberAvatar extends StatelessWidget {
-  const MemberAvatar({super.key, required this.initials, this.size = 44});
+  const MemberAvatar({super.key, required this.initials, this.size = 48});
 
   final String initials;
   final double size;
@@ -17,13 +17,13 @@ class MemberAvatar extends StatelessWidget {
       height: size,
       alignment: Alignment.center,
       decoration: const BoxDecoration(
-        color: AppColors.yellow100,
+        color: AppColors.yellow200,
         shape: BoxShape.circle,
       ),
       child: Text(
         initials,
         style: GoogleFonts.barlow(
-          fontSize: 15,
+          fontSize: size * 0.34,
           fontWeight: FontWeight.w700,
           color: AppColors.brownInk,
         ),

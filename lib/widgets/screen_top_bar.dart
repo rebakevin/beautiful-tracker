@@ -41,7 +41,7 @@ class ScreenTopBar extends StatelessWidget {
 class _BackButton extends StatelessWidget {
   const _BackButton({required this.onTap});
 
-  static const double size = 44;
+  static const double size = 42;
 
   final VoidCallback onTap;
 

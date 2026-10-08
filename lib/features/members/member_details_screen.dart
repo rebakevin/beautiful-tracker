@@ -57,16 +57,32 @@ class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
         title: const Text('Remove member'),
         content: Text('Remove ${_member.name} from the team?'),
         actions: [
-          TextButton(
+          OutlinedButton(
             onPressed: () => Navigator.of(context).pop(false),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: AppColors.ink,
+              backgroundColor: AppColors.surface,
+              side: const BorderSide(color: AppColors.hairline),
+              shape: const StadiumBorder(),
+              textStyle: GoogleFonts.barlow(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
             child: const Text('Cancel'),
           ),
-          TextButton(
+          FilledButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text(
-              'Remove',
-              style: TextStyle(color: AppColors.overdueFg),
+            style: FilledButton.styleFrom(
+              backgroundColor: AppColors.danger,
+              foregroundColor: Colors.white,
+              shape: const StadiumBorder(),
+              textStyle: GoogleFonts.barlow(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
             ),
+            child: const Text('Remove'),
           ),
         ],
       ),
@@ -149,7 +165,7 @@ class _ProfileHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        MemberAvatar(initials: member.initials, size: 40),
+        MemberAvatar(initials: member.initials, size: 42),
         const SizedBox(width: AppSpacing.md),
         Expanded(
           child: Column(
@@ -158,8 +174,9 @@ class _ProfileHeader extends StatelessWidget {
               Text(
                 member.name,
                 style: GoogleFonts.barlow(
-                  fontSize: 22,
+                  fontSize: 28,
                   fontWeight: FontWeight.w700,
+                  letterSpacing: -0.3,
                   color: AppColors.ink,
                 ),
               ),
@@ -266,7 +283,7 @@ class _ActionRow extends StatelessWidget {
       children: [
         Expanded(
           child: SizedBox(
-            height: 60,
+            height: 52,
             child: OutlinedButton(
               onPressed: onEdit,
               style: OutlinedButton.styleFrom(
@@ -278,7 +295,7 @@ class _ActionRow extends StatelessWidget {
                 ),
                 textStyle: GoogleFonts.barlow(
                   fontSize: 16,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
               child: const Text('Edit Member'),
@@ -288,11 +305,11 @@ class _ActionRow extends StatelessWidget {
         const SizedBox(width: AppSpacing.cardGap),
         Expanded(
           child: SizedBox(
-            height: 60,
+            height: 52,
             child: OutlinedButton(
               onPressed: onRemove,
               style: OutlinedButton.styleFrom(
-                foregroundColor: AppColors.overdueFg,
+                foregroundColor: AppColors.danger,
                 backgroundColor: AppColors.surface,
                 side: const BorderSide(color: _dangerOutline),
                 shape: RoundedRectangleBorder(
@@ -300,7 +317,7 @@ class _ActionRow extends StatelessWidget {
                 ),
                 textStyle: GoogleFonts.barlow(
                   fontSize: 16,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
               child: const Text('Remove'),

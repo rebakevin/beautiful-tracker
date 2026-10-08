@@ -7,6 +7,7 @@ import '../../widgets/page_scaffold.dart';
 import 'data/task_repository.dart';
 import 'models/task.dart';
 import 'screens/create_edit_task_screen.dart';
+import 'screens/task_details_screen.dart';
 import 'widgets/task_card.dart';
 
 class TasksScreen extends StatefulWidget {
@@ -64,6 +65,15 @@ class _TasksScreenState extends State<TasksScreen> {
       MaterialPageRoute(builder: (_) => CreateEditTaskScreen(task: task)),
     );
     if (saved == true) _loadTasks();
+  }
+
+  /// Opens the details screen and reloads the list if the task was changed
+  /// or deleted there.
+  Future<void> _openDetails(Task task) async {
+    final changed = await Navigator.of(context).push<bool>(
+      MaterialPageRoute(builder: (_) => TaskDetailsScreen(task: task)),
+    );
+    if (changed == true) _loadTasks();
   }
 
   /// Tasks after applying the SLA filter and the search text.
@@ -210,8 +220,7 @@ class _TasksScreenState extends State<TasksScreen> {
                 const SizedBox(height: AppSpacing.listGap),
             itemBuilder: (context, index) {
               final task = tasks[index];
-              // Temporary: opens the edit form until Task Details exists.
-              return TaskCard(task: task, onTap: () => _openForm(task));
+              return TaskCard(task: task, onTap: () => _openDetails(task));
             },
           ),
         ),

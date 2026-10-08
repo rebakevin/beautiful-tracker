@@ -3,14 +3,52 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../data/repositories/member_repository.dart';
 import 'add_member_screen.dart';
 import 'member.dart';
 import 'widgets/member_card.dart';
 
-class MembersScreen extends StatelessWidget {
-  const MembersScreen({super.key, this.members = const []});
+class MembersScreen extends StatefulWidget {
+  const MembersScreen({super.key});
 
-  final List<Member> members;
+  @override
+  State<MembersScreen> createState() => _MembersScreenState();
+}
+
+class _MembersScreenState extends State<MembersScreen> {
+  final _repository = const MemberRepository();
+  List<Member> _members = [];
+  bool _loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    try {
+      final members = await _repository.fetchAll();
+      if (!mounted) return;
+      setState(() {
+        _members = members;
+        _loading = false;
+      });
+    } catch (error) {
+      if (!mounted) return;
+      debugPrint('Failed to load members: $error');
+      setState(() => _loading = false);
+    }
+  }
+
+  Future<void> _openAddMember() async {
+    final added = await Navigator.of(context).push<bool>(
+      MaterialPageRoute<bool>(builder: (_) => const AddMemberScreen()),
+    );
+    if (added == true) {
+      await _load();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,30 +64,36 @@ class MembersScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _Header(memberCount: members.length),
+            _Header(memberCount: _members.length, onAdd: _openAddMember),
             const SizedBox(height: AppSpacing.section),
-            Expanded(
-              child: members.isEmpty
-                  ? const _EmptyMembersState()
-                  : ListView.separated(
-                      itemCount: members.length,
-                      separatorBuilder: (_, _) =>
-                          const SizedBox(height: AppSpacing.cardGap),
-                      itemBuilder: (context, index) =>
-                          MemberCard(member: members[index]),
-                    ),
-            ),
+            Expanded(child: _buildBody()),
           ],
         ),
       ),
     );
   }
+
+  Widget _buildBody() {
+    if (_loading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (_members.isEmpty) {
+      return _EmptyMembersState(onAdd: _openAddMember);
+    }
+    return ListView.separated(
+      itemCount: _members.length,
+      separatorBuilder: (_, _) =>
+          const SizedBox(height: AppSpacing.cardGap),
+      itemBuilder: (context, index) => MemberCard(member: _members[index]),
+    );
+  }
 }
 
 class _Header extends StatelessWidget {
-  const _Header({required this.memberCount});
+  const _Header({required this.memberCount, required this.onAdd});
 
   final int memberCount;
+  final VoidCallback onAdd;
 
   @override
   Widget build(BuildContext context) {
@@ -78,13 +122,7 @@ class _Header extends StatelessWidget {
         ),
         const SizedBox(width: AppSpacing.md),
         FilledButton(
-          onPressed: () {
-            Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (_) => const AddMemberScreen(),
-              ),
-            );
-          },
+          onPressed: onAdd,
           style: FilledButton.styleFrom(
             backgroundColor: AppColors.primary,
             foregroundColor: Colors.white,
@@ -109,7 +147,9 @@ class _Header extends StatelessWidget {
 }
 
 class _EmptyMembersState extends StatelessWidget {
-  const _EmptyMembersState();
+  const _EmptyMembersState({required this.onAdd});
+
+  final VoidCallback onAdd;
 
   @override
   Widget build(BuildContext context) {
@@ -143,13 +183,7 @@ class _EmptyMembersState extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.section),
           FilledButton.icon(
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute<void>(
-                  builder: (_) => const AddMemberScreen(),
-                ),
-              );
-            },
+            onPressed: onAdd,
             style: FilledButton.styleFrom(
               backgroundColor: AppColors.primary,
               foregroundColor: Colors.white,

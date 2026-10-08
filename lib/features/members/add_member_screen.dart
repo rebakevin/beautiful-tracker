@@ -243,7 +243,6 @@ class _BottomBar extends StatelessWidget {
               ),
               const SizedBox(width: AppSpacing.cardGap),
               Expanded(
-                flex: 2,
                 child: SizedBox(
                   height: 52,
                   child: FilledButton(

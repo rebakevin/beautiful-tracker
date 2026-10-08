@@ -27,6 +27,7 @@ class TaskStatusCount {
 /// A team member shown in the members list.
 class Member {
   const Member({
+    this.id,
     required this.name,
     required this.email,
     required this.initials,
@@ -34,6 +35,7 @@ class Member {
     required this.statuses,
   });
 
+  final int? id;
   final String name;
   final String email;
   final String initials;

@@ -17,6 +17,25 @@ class MemberRepository {
     });
   }
 
+  Future<int> update(Member member) async {
+    final db = await DatabaseHelper.instance.database;
+    return db.update(
+      'members',
+      {
+        'name': member.name,
+        'email': member.email,
+        'initials': member.initials,
+      },
+      where: 'id = ?',
+      whereArgs: [member.id],
+    );
+  }
+
+  Future<int> delete(int id) async {
+    final db = await DatabaseHelper.instance.database;
+    return db.delete('members', where: 'id = ?', whereArgs: [id]);
+  }
+
   Future<List<Member>> fetchAll() async {
     final db = await DatabaseHelper.instance.database;
     final rows = await db.query('members', orderBy: 'name ASC');
@@ -25,6 +44,7 @@ class MemberRepository {
 
   Member _fromRow(Map<String, Object?> row) {
     return Member(
+      id: row['id'] as int,
       name: row['name'] as String,
       email: row['email'] as String,
       initials: row['initials'] as String,

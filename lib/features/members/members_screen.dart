@@ -6,6 +6,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../data/repositories/member_repository.dart';
 import 'add_member_screen.dart';
 import 'member.dart';
+import 'member_details_screen.dart';
 import 'widgets/member_card.dart';
 
 class MembersScreen extends StatefulWidget {
@@ -42,12 +43,21 @@ class _MembersScreenState extends State<MembersScreen> {
   }
 
   Future<void> _openAddMember() async {
-    final added = await Navigator.of(context).push<bool>(
-      MaterialPageRoute<bool>(builder: (_) => const AddMemberScreen()),
+    final added = await Navigator.of(context).push<Member>(
+      MaterialPageRoute<Member>(builder: (_) => const AddMemberScreen()),
     );
-    if (added == true) {
+    if (added != null) {
       await _load();
     }
+  }
+
+  Future<void> _openMemberDetails(Member member) async {
+    await Navigator.of(context).push<void>(
+      MaterialPageRoute<void>(
+        builder: (_) => MemberDetailsScreen(member: member),
+      ),
+    );
+    await _load();
   }
 
   @override
@@ -84,7 +94,13 @@ class _MembersScreenState extends State<MembersScreen> {
       itemCount: _members.length,
       separatorBuilder: (_, _) =>
           const SizedBox(height: AppSpacing.cardGap),
-      itemBuilder: (context, index) => MemberCard(member: _members[index]),
+      itemBuilder: (context, index) {
+        final member = _members[index];
+        return MemberCard(
+          member: member,
+          onTap: () => _openMemberDetails(member),
+        );
+      },
     );
   }
 }

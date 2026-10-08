@@ -4,10 +4,14 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../data/repositories/member_repository.dart';
+import '../../widgets/screen_top_bar.dart';
 import 'member.dart';
 
 class AddMemberScreen extends StatefulWidget {
-  const AddMemberScreen({super.key});
+  const AddMemberScreen({super.key, this.member});
+
+  /// When set, the screen edits this member instead of creating a new one.
+  final Member? member;
 
   @override
   State<AddMemberScreen> createState() => _AddMemberScreenState();
@@ -18,6 +22,18 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
   final _emailController = TextEditingController();
   final _repository = const MemberRepository();
   bool _saving = false;
+
+  bool get _isEditing => widget.member != null;
+
+  @override
+  void initState() {
+    super.initState();
+    final member = widget.member;
+    if (member != null) {
+      _nameController.text = member.name;
+      _emailController.text = member.email;
+    }
+  }
 
   @override
   void dispose() {
@@ -39,16 +55,40 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
 
     setState(() => _saving = true);
     try {
-      final member = Member(
-        name: name,
-        email: email,
-        initials: Member.initialsFromName(name),
-        taskCount: 0,
-        statuses: const [],
-      );
-      await _repository.insert(member);
+      final initials = Member.initialsFromName(name);
+      final Member saved;
+      if (_isEditing) {
+        final existing = widget.member!;
+        saved = Member(
+          id: existing.id,
+          name: name,
+          email: email,
+          initials: initials,
+          taskCount: existing.taskCount,
+          statuses: existing.statuses,
+        );
+        await _repository.update(saved);
+      } else {
+        final id = await _repository.insert(
+          Member(
+            name: name,
+            email: email,
+            initials: initials,
+            taskCount: 0,
+            statuses: const [],
+          ),
+        );
+        saved = Member(
+          id: id,
+          name: name,
+          email: email,
+          initials: initials,
+          taskCount: 0,
+          statuses: const [],
+        );
+      }
       if (!mounted) return;
-      Navigator.of(context).pop(true);
+      Navigator.of(context).pop(saved);
     } catch (_) {
       if (!mounted) return;
       setState(() => _saving = false);
@@ -65,7 +105,7 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            const _TopBar(),
+            ScreenTopBar(title: _isEditing ? 'Edit Member' : 'Add Member'),
             const SizedBox(height: AppSpacing.section),
             Expanded(
               child: SingleChildScrollView(
@@ -97,62 +137,6 @@ class _AddMemberScreenState extends State<AddMemberScreen> {
               onSave: _save,
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _TopBar extends StatelessWidget {
-  const _TopBar();
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screen),
-      child: Row(
-        children: [
-          _BackButton(onTap: () => Navigator.of(context).pop()),
-          Expanded(
-            child: Center(
-              child: Text(
-                'Add Member',
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-            ),
-          ),
-          const SizedBox(width: _BackButton.size),
-        ],
-      ),
-    );
-  }
-}
-
-class _BackButton extends StatelessWidget {
-  const _BackButton({required this.onTap});
-
-  static const double size = 44;
-
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: AppColors.surface,
-      shape: const CircleBorder(
-        side: BorderSide(color: AppColors.hairline),
-      ),
-      child: InkWell(
-        onTap: onTap,
-        customBorder: const CircleBorder(),
-        child: SizedBox(
-          width: size,
-          height: size,
-          child: const Icon(
-            Icons.chevron_left,
-            size: 24,
-            color: AppColors.ink,
-          ),
         ),
       ),
     );

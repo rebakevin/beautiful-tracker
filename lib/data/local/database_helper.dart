@@ -12,7 +12,16 @@ class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._();
 
   static const _databaseName = 'beautiful_tracker.db';
-  static const _version = 1;
+  static const _version = 2;
+
+  static const _createMembersTable = '''
+    CREATE TABLE IF NOT EXISTS members (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      email TEXT NOT NULL,
+      initials TEXT NOT NULL
+    )
+  ''';
 
   Database? _database;
 
@@ -37,11 +46,13 @@ class DatabaseHelper {
   }
 
   Future<void> _onCreate(Database db, int version) async {
-    // No tables yet.
+    await db.execute(_createMembersTable);
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    // No migrations yet.
+    if (oldVersion < 2) {
+      await db.execute(_createMembersTable);
+    }
   }
 
   Future<void> close() async {

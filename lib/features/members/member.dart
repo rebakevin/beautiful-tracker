@@ -39,4 +39,20 @@ class Member {
   final String initials;
   final int taskCount;
   final List<TaskStatusCount> statuses;
+
+  /// Derives initials from a full name: the first character of each of the
+  /// first two names (so "Alice Uwase Mireille" becomes "AU").
+  static String initialsFromName(String name) {
+    final parts = name
+        .trim()
+        .split(RegExp(r'\s+'))
+        .where((part) => part.isNotEmpty)
+        .toList();
+    if (parts.isEmpty) return '';
+    final buffer = StringBuffer(parts.first[0].toUpperCase());
+    if (parts.length > 1) {
+      buffer.write(parts[1][0].toUpperCase());
+    }
+    return buffer.toString();
+  }
 }

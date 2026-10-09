@@ -227,6 +227,22 @@ class _TasksScreenState extends State<TasksScreen> {
           _openAssigneeSheet,
           active: _assigneeFilter != null,
         ),
+        const Spacer(),
+        if (_statusFilter != null && _assigneeFilter != null)
+          TextButton(
+            onPressed: () => setState(() {
+              _statusFilter = null;
+              _assigneeFilter = null;
+            }),
+            style: TextButton.styleFrom(
+              foregroundColor: AppColors.ink2,
+              textStyle: const TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            child: const Text('Clear filters'),
+          ),
       ],
     );
   }

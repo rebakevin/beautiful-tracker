@@ -21,11 +21,7 @@ class MemberRepository {
     final db = await DatabaseHelper.instance.database;
     return db.update(
       'members',
-      {
-        'name': member.name,
-        'email': member.email,
-        'initials': member.initials,
-      },
+      {'name': member.name, 'email': member.email, 'initials': member.initials},
       where: 'id = ?',
       whereArgs: [member.id],
     );

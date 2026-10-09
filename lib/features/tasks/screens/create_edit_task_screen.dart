@@ -33,7 +33,6 @@ class _CreateEditTaskScreenState extends State<CreateEditTaskScreen> {
   DateTime? _dueDate;
   late TaskPriority _priority;
   late TaskStatus _status;
-  late SlaStatus _sla;
   bool _saving = false;
 
   bool get _isEditing => widget.task != null;
@@ -51,7 +50,6 @@ class _CreateEditTaskScreenState extends State<CreateEditTaskScreen> {
     _assignee = t?.assignee;
     _priority = t?.priority ?? TaskPriority.medium;
     _status = t?.status ?? TaskStatus.todo;
-    _sla = t?.sla ?? SlaStatus.onTrack;
   }
 
   Future<void> _pickAssignee(FormFieldState<String> field) async {
@@ -122,7 +120,6 @@ class _CreateEditTaskScreenState extends State<CreateEditTaskScreen> {
       dueDate: _dueDate!,
       priority: _priority,
       status: _status,
-      sla: _sla,
     );
 
     try {
@@ -297,20 +294,6 @@ class _CreateEditTaskScreenState extends State<CreateEditTaskScreen> {
                   ],
                   selected: {_status},
                   onSelectionChanged: (s) => setState(() => _status = s.first),
-                ),
-              ),
-              _field(
-                'SLA status (set manually for now)',
-                DropdownButtonFormField<SlaStatus>(
-                  initialValue: _sla,
-                  decoration: _decoration(),
-                  items: [
-                    for (final s in SlaStatus.values)
-                      DropdownMenuItem(value: s, child: Text(s.label)),
-                  ],
-                  onChanged: (value) {
-                    if (value != null) setState(() => _sla = value);
-                  },
                 ),
               ),
               const SizedBox(height: AppSpacing.sm),

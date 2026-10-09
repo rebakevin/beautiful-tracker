@@ -17,6 +17,7 @@ enum TaskStatus {
 }
 
 /// SLA status, derived automatically from a task's workflow status and due
+/// date rather than chosen by the user.
 enum SlaStatus {
   onTrack('On Track'),
   atRisk('At Risk'),
@@ -68,7 +69,6 @@ class Task {
 
   SlaStatus get sla => resolveSla(status: status, dueDate: dueDate, now: DateTime.now());
 
-  /// Converts the task into a row that SQLite can store.
   Map<String, Object?> toMap() => {
     if (id != null) 'id': id,
     'title': title,
@@ -79,7 +79,6 @@ class Task {
     'status': status.name,
   };
 
-  /// Builds a task from a row read out of SQLite.
   factory Task.fromMap(Map<String, Object?> map) => Task(
     id: map['id'] as int?,
     title: map['title'] as String,
@@ -90,7 +89,6 @@ class Task {
     status: TaskStatus.values.byName(map['status'] as String),
   );
 
-  /// Returns a copy with some fields changed (used when editing).
   Task copyWith({
     String? title,
     String? description,

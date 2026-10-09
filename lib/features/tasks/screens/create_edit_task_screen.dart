@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_spacing.dart';
+import '../../../widgets/app_sheet.dart';
+import '../../../widgets/form_page.dart';
+import '../../../widgets/labeled_text_field.dart';
+import '../../../widgets/picker_field.dart';
 import '../../../data/repositories/member_repository.dart';
 import '../../members/member.dart' show Member;
 import '../../members/widgets/member_picker_sheet.dart';
 import '../data/task_repository.dart';
 import '../models/task.dart';
 import '../utils/task_date.dart';
-
-/// Form used both to create a task and to edit an existing one.
+import '../widgets/choice_segments.dart';
 
 class CreateEditTaskScreen extends StatefulWidget {
   const CreateEditTaskScreen({super.key, this.task});
@@ -60,16 +61,9 @@ class _CreateEditTaskScreenState extends State<CreateEditTaskScreen> {
       members = [];
     }
     if (!mounted) return;
-    final picked = await showModalBottomSheet<MemberPick>(
-      context: context,
-      backgroundColor: AppColors.surface,
-      showDragHandle: true,
+    final picked = await showAppSheet<MemberPick>(
+      context,
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(AppRadius.sheet),
-        ),
-      ),
       builder: (_) => MemberPickerSheet(
         title: 'Assign to',
         members: members,
@@ -139,202 +133,78 @@ class _CreateEditTaskScreenState extends State<CreateEditTaskScreen> {
     }
   }
 
-  InputDecoration _decoration({String? hint, Widget? suffixIcon}) {
-    OutlineInputBorder border(Color color) => OutlineInputBorder(
-      borderRadius: BorderRadius.circular(AppRadius.field),
-      borderSide: BorderSide(color: color, width: 1.5),
-    );
-    return InputDecoration(
-      hintText: hint,
-      suffixIcon: suffixIcon,
-      filled: true,
-      fillColor: AppColors.surface,
-      contentPadding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.cardPadding,
-        vertical: AppSpacing.md,
-      ),
-      enabledBorder: border(AppColors.border),
-      focusedBorder: border(AppColors.primary),
-      errorBorder: border(AppColors.danger),
-      focusedErrorBorder: border(AppColors.danger),
-    );
-  }
-
-  Widget _field(String label, Widget child) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: AppSpacing.cardGap),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: AppColors.ink2,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.xs),
-          child,
-        ],
-      ),
-    );
-  }
-
-  ButtonStyle get _segmentStyle => SegmentedButton.styleFrom(
-    backgroundColor: AppColors.surface,
-    foregroundColor: AppColors.ink2,
-    selectedBackgroundColor: AppColors.primaryTint,
-    selectedForegroundColor: AppColors.primary,
-    side: const BorderSide(color: AppColors.border),
-  );
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(_isEditing ? 'Edit Task' : 'Create Task'),
-        backgroundColor: AppColors.ground,
-        foregroundColor: AppColors.ink,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-      ),
-      body: SafeArea(
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            padding: const EdgeInsets.all(AppSpacing.screen),
-            children: [
-              _field(
-                'Task title',
-                TextFormField(
-                  controller: _title,
-                  textInputAction: TextInputAction.next,
-                  decoration: _decoration(hint: 'Enter task title'),
-                  validator: (value) {
-                    final text = value?.trim() ?? '';
-                    if (text.isEmpty) return 'Title is required';
-                    if (text.length < 3) {
-                      return 'Title must be at least 3 characters';
-                    }
-                    return null;
-                  },
-                ),
-              ),
-              _field(
-                'Description',
-                TextFormField(
-                  controller: _description,
-                  maxLines: 4,
-                  decoration: _decoration(hint: 'Enter task description'),
-                ),
-              ),
-              _field(
-                'Assign to',
-                FormField<String>(
-                  initialValue: _assignee,
-                  validator: (value) =>
-                      value == null ? 'Choose who this task is for' : null,
-                  builder: (field) => InkWell(
-                    borderRadius: BorderRadius.circular(AppRadius.field),
-                    onTap: () => _pickAssignee(field),
-                    child: InputDecorator(
-                      decoration: _decoration(
-                        suffixIcon: const Icon(Icons.keyboard_arrow_down),
-                      ).copyWith(errorText: field.errorText),
-                      child: Text(
-                        _assignee ?? 'Select team member',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: _assignee == null
-                              ? AppColors.muted
-                              : AppColors.ink,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              _field(
-                'Due date',
-                TextFormField(
-                  controller: _dateText,
-                  readOnly: true,
-                  onTap: _pickDate,
-                  decoration: _decoration(
-                    hint: 'Select date',
-                    suffixIcon: const Icon(Icons.calendar_today_outlined),
-                  ),
-                  validator: (_) =>
-                      _dueDate == null ? 'Choose a due date' : null,
-                ),
-              ),
-              _field(
-                'Priority',
-                SegmentedButton<TaskPriority>(
-                  showSelectedIcon: false,
-                  style: _segmentStyle,
-                  segments: [
-                    for (final p in TaskPriority.values)
-                      ButtonSegment(value: p, label: Text(p.label)),
-                  ],
-                  selected: {_priority},
-                  onSelectionChanged: (s) =>
-                      setState(() => _priority = s.first),
-                ),
-              ),
-              _field(
-                'Status',
-                SegmentedButton<TaskStatus>(
-                  showSelectedIcon: false,
-                  style: _segmentStyle,
-                  segments: [
-                    for (final s in TaskStatus.values)
-                      ButtonSegment(value: s, label: Text(s.label)),
-                  ],
-                  selected: {_status},
-                  onSelectionChanged: (s) => setState(() => _status = s.first),
-                ),
-              ),
-              const SizedBox(height: AppSpacing.sm),
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: _saving
-                          ? null
-                          : () => Navigator.of(context).pop(),
-                      style: OutlinedButton.styleFrom(
-                        minimumSize: const Size(0, 52),
-                        foregroundColor: AppColors.ink,
-                        side: const BorderSide(color: AppColors.border),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(AppRadius.field),
-                        ),
-                      ),
-                      child: const Text('Cancel'),
-                    ),
-                  ),
-                  const SizedBox(width: AppSpacing.md),
-                  Expanded(
-                    child: FilledButton(
-                      onPressed: _saving ? null : _save,
-                      style: FilledButton.styleFrom(
-                        minimumSize: const Size(0, 52),
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(AppRadius.field),
-                        ),
-                      ),
-                      child: Text(_isEditing ? 'Save Changes' : 'Save Task'),
-                    ),
-                  ),
-                ],
-              ),
-            ],
+    return Form(
+      key: _formKey,
+      child: FormPage(
+        title: _isEditing ? 'Edit Task' : 'Create Task',
+        saveLabel: _isEditing ? 'Save Changes' : 'Save Task',
+        saving: _saving,
+        onSave: _save,
+        children: [
+          LabeledTextField(
+            label: 'Task title',
+            controller: _title,
+            hint: 'Enter task title',
+            validator: (value) {
+              final text = value?.trim() ?? '';
+              if (text.isEmpty) return 'Title is required';
+              if (text.length < 3) return 'Title must be at least 3 characters';
+              return null;
+            },
           ),
-        ),
+          LabeledTextField(
+            label: 'Description',
+            controller: _description,
+            hint: 'Enter task description',
+            maxLines: 4,
+            textInputAction: TextInputAction.newline,
+          ),
+          LabeledField(
+            label: 'Assign to',
+            child: FormField<String>(
+              initialValue: _assignee,
+              validator: (value) =>
+                  value == null ? 'Choose who this task is for' : null,
+              builder: (field) => PickerField(
+                text: _assignee ?? 'Select team member',
+                isPlaceholder: _assignee == null,
+                errorText: field.errorText,
+                onTap: () => _pickAssignee(field),
+              ),
+            ),
+          ),
+          LabeledField(
+            label: 'Due date',
+            child: TextFormField(
+              controller: _dateText,
+              readOnly: true,
+              onTap: _pickDate,
+              decoration: const InputDecoration(
+                hintText: 'Select date',
+                suffixIcon: Icon(Icons.calendar_today_outlined),
+              ),
+              validator: (_) => _dueDate == null ? 'Choose a due date' : null,
+            ),
+          ),
+          LabeledField(
+            label: 'Priority',
+            child: ChoiceSegments<TaskPriority>(
+              options: [for (final p in TaskPriority.values) (p, p.label)],
+              selected: _priority,
+              onChanged: (p) => setState(() => _priority = p),
+            ),
+          ),
+          LabeledField(
+            label: 'Status',
+            child: ChoiceSegments<TaskStatus>(
+              options: [for (final s in TaskStatus.values) (s, s.label)],
+              selected: _status,
+              onChanged: (s) => setState(() => _status = s),
+            ),
+          ),
+        ],
       ),
     );
   }

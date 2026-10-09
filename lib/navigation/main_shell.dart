@@ -16,19 +16,14 @@ class MainShell extends StatefulWidget {
 class _MainShellState extends State<MainShell> {
   int _currentIndex = 0;
 
+  int _dashboardRefresh = 0;
   final _membersKey = GlobalKey<MembersScreenState>();
 
-  // IndexedStack keeps every tab alive, so scroll position and inputs are
-  // preserved when switching between tabs.
-  late final List<Widget> _pages = [
-    const DashboardScreen(),
-    const TasksScreen(),
-    MembersScreen(key: _membersKey),
-    const ProfileScreen(),
-  ];
-
   void _onTabSelected(int index) {
-    setState(() => _currentIndex = index);
+    setState(() {
+      _currentIndex = index;
+      if (index == 0) _dashboardRefresh++;
+    });
     if (index == 2) {
       _membersKey.currentState?.reload();
     }
@@ -37,7 +32,20 @@ class _MainShellState extends State<MainShell> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(index: _currentIndex, children: _pages),
+      // IndexedStack keeps every tab alive, so scroll position and inputs are
+      // preserved when switching between tabs.
+      body: IndexedStack(
+        index: _currentIndex,
+        children: [
+          DashboardScreen(
+            refreshToken: _dashboardRefresh,
+            onViewAllTasks: () => _onTabSelected(1),
+          ),
+          const TasksScreen(),
+          MembersScreen(key: _membersKey),
+          const ProfileScreen(),
+        ],
+      ),
       bottomNavigationBar: DecoratedBox(
         decoration: BoxDecoration(
           border: Border(top: BorderSide(color: context.palette.hairline)),

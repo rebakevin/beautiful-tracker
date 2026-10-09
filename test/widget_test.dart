@@ -77,7 +77,7 @@ void main() {
       BeautifulTrackerApp(preferences: await _prefs(), initialUser: _user),
     );
 
-    expect(find.text('Project overview will appear here.'), findsOneWidget);
+    expect(find.textContaining(', Kevin'), findsOneWidget);
 
     await tester.tap(find.text('Tasks'));
     await tester.pumpAndSettle();

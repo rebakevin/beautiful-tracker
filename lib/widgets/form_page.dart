@@ -89,7 +89,6 @@ class FormPage extends StatelessWidget {
                     ),
                     const SizedBox(width: AppSpacing.listGap),
                     Expanded(
-                      flex: 2,
                       child: FilledButton(
                         style: FilledButton.styleFrom(
                           minimumSize: const Size.fromHeight(52),

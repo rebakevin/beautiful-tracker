@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../widgets/app_sheet.dart';
 import '../../widgets/empty_state.dart';
 import '../../widgets/page_scaffold.dart';
 import '../../data/repositories/member_repository.dart';
@@ -51,7 +52,6 @@ class _TasksScreenState extends State<TasksScreen> {
     super.dispose();
   }
 
-  /// Reads every task from SQLite and refreshes the screen.
   Future<void> _loadTasks() async {
     try {
       final tasks = await _repository.getAll();
@@ -71,8 +71,6 @@ class _TasksScreenState extends State<TasksScreen> {
     }
   }
 
-  /// Opens the form (create when [task] is null, edit otherwise) and reloads
-  /// the list if the form reports that something was saved.
   Future<void> _openForm([Task? task]) async {
     final saved = await Navigator.of(context).push<bool>(
       MaterialPageRoute(builder: (_) => CreateEditTaskScreen(task: task)),
@@ -80,8 +78,6 @@ class _TasksScreenState extends State<TasksScreen> {
     if (saved == true) _loadTasks();
   }
 
-  /// Opens the details screen and reloads the list if the task was changed
-  /// or deleted there.
   Future<void> _openDetails(Task task) async {
     final changed = await Navigator.of(context).push<bool>(
       MaterialPageRoute(builder: (_) => TaskDetailsScreen(task: task)),
@@ -89,7 +85,6 @@ class _TasksScreenState extends State<TasksScreen> {
     if (changed == true) _loadTasks();
   }
 
-  /// Tasks after applying the status filter and the search text.
   List<Task> get _visibleTasks {
     final q = _query.trim().toLowerCase();
     return _tasks.where((t) {
@@ -228,7 +223,7 @@ class _TasksScreenState extends State<TasksScreen> {
           active: _assigneeFilter != null,
         ),
         const Spacer(),
-        if (_statusFilter != null && _assigneeFilter != null)
+        if (_statusFilter != null || _assigneeFilter != null)
           TextButton(
             onPressed: () => setState(() {
               _statusFilter = null;
@@ -294,16 +289,9 @@ class _TasksScreenState extends State<TasksScreen> {
       members = [];
     }
     if (!mounted) return;
-    final result = await showModalBottomSheet<MemberPick>(
-      context: context,
-      backgroundColor: AppColors.surface,
-      showDragHandle: true,
+    final result = await showAppSheet<MemberPick>(
+      context,
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(AppRadius.sheet),
-        ),
-      ),
       builder: (_) => MemberPickerSheet(
         title: 'Filter by assignee',
         allLabel: 'All members',
@@ -320,15 +308,8 @@ class _TasksScreenState extends State<TasksScreen> {
     required List<(T, String)> options,
     required T? selected,
   }) {
-    return showModalBottomSheet<_FilterChoice<T>>(
-      context: context,
-      backgroundColor: AppColors.surface,
-      showDragHandle: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(AppRadius.sheet),
-        ),
-      ),
+    return showAppSheet<_FilterChoice<T>>(
+      context,
       builder: (context) {
         Widget row(String label, T? value) {
           final isSelected = value == selected;

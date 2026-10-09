@@ -139,7 +139,12 @@ void main() {
         password: '123456',
       );
       expect(
-        accounts.updateProfile(b, name: 'B', email: 'a@team.dev'),
+        accounts.updateProfile(
+          b,
+          name: 'B',
+          email: 'a@team.dev',
+          avatarPath: null,
+        ),
         throwsAccountError(
           AccountField.email,
           'An account with this email already exists',

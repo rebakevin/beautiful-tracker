@@ -25,9 +25,8 @@ class InitialsAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fallback = _initials();
     final path = imagePath;
-    if (path == null || kIsWeb) return fallback;
+    if (path == null || kIsWeb) return _initials();
 
     return ClipOval(
       child: Image.file(
@@ -37,7 +36,7 @@ class InitialsAvatar extends StatelessWidget {
         fit: BoxFit.cover,
         cacheWidth: (size * MediaQuery.devicePixelRatioOf(context)).round(),
         // A deleted or unreadable file falls back to the initials.
-        errorBuilder: (_, _, _) => fallback,
+        errorBuilder: (_, _, _) => _initials(),
       ),
     );
   }

@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../data/task_repository.dart';
+import '../../../widgets/option_picker_sheet.dart';
 import '../models/task.dart';
 import '../utils/task_date.dart';
 import '../widgets/task_badges.dart';
 import 'create_edit_task_screen.dart';
 
-/// Read-only view of one task with Edit, Delete and Change Status actions.
 /// Pops with true when something changed, so the list knows to reload.
 class TaskDetailsScreen extends StatefulWidget {
   const TaskDetailsScreen({super.key, required this.task});
@@ -38,42 +38,12 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
     ).showSnackBar(SnackBar(content: Text(message)));
   }
 
-  /// Lets the user pick a new workflow status from a bottom sheet.
   Future<void> _changeStatus() async {
-    final picked = await showModalBottomSheet<TaskStatus>(
-      context: context,
-      backgroundColor: AppColors.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(AppRadius.sheet),
-        ),
-      ),
-      builder: (context) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Padding(
-              padding: EdgeInsets.all(AppSpacing.cardPadding),
-              child: Text(
-                'Change status',
-                style: TextStyle(
-                  fontSize: 19,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.ink,
-                ),
-              ),
-            ),
-            for (final s in TaskStatus.values)
-              ListTile(
-                title: Text(s.label),
-                trailing: s == _task.status
-                    ? const Icon(Icons.check, color: AppColors.primary)
-                    : null,
-                onTap: () => Navigator.of(context).pop(s),
-              ),
-          ],
-        ),
-      ),
+    final picked = await showOptionPickerSheet<TaskStatus>(
+      context,
+      title: 'Change status',
+      options: [for (final s in TaskStatus.values) (s, s.label)],
+      selected: _task.status,
     );
     if (picked == null || picked == _task.status) return;
 
@@ -102,7 +72,6 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
     }
   }
 
-  /// Opens the form in edit mode and reloads this task if it was saved.
   Future<void> _edit() async {
     final saved = await Navigator.of(context).push<bool>(
       MaterialPageRoute(builder: (_) => CreateEditTaskScreen(task: _task)),
@@ -121,7 +90,6 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
     });
   }
 
-  /// Asks for confirmation, then deletes the task and goes back to the list.
   Future<void> _delete() async {
     final confirmed = await showDialog<bool>(
       context: context,

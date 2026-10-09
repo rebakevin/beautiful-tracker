@@ -16,7 +16,6 @@ class MainShell extends StatefulWidget {
 class _MainShellState extends State<MainShell> {
   int _currentIndex = 0;
 
-  // Bumped whenever the dashboard tab is selected so it reloads its data.
   int _dashboardRefresh = 0;
 
   void _onTabSelected(int index) {

@@ -5,7 +5,6 @@ import '../models/task.dart';
 import '../utils/task_date.dart';
 import 'task_badges.dart';
 
-/// One row of the task list: title, SLA badge, assignee, due date, status.
 class TaskCard extends StatelessWidget {
   const TaskCard({super.key, required this.task, required this.onTap});
 

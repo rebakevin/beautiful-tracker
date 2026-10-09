@@ -28,7 +28,6 @@ class AvatarStorage {
     return target;
   }
 
-  /// Removes a stored photo; a missing file is not an error.
   Future<void> delete(String? path) async {
     if (path == null) return;
     try {

@@ -4,25 +4,9 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../tasks/models/task.dart';
+import '../../tasks/utils/task_date.dart';
 import '../../tasks/widgets/task_badges.dart';
 
-const _months = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec',
-];
-
-/// Compact task row for the dashboard: title, assignee and due date, then
-/// SLA badge, status pill and a priority signal.
 class NeedsAttentionCard extends StatelessWidget {
   const NeedsAttentionCard({
     super.key,
@@ -36,7 +20,7 @@ class NeedsAttentionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final due = '${_months[task.dueDate.month - 1]} ${task.dueDate.day}';
+    final due = formatTaskDateShort(task.dueDate);
 
     return Card(
       clipBehavior: Clip.antiAlias,
@@ -74,7 +58,6 @@ class NeedsAttentionCard extends StatelessWidget {
   }
 }
 
-/// Three ascending bars, filled up to the priority level, plus its label.
 class _PriorityIndicator extends StatelessWidget {
   const _PriorityIndicator({required this.priority});
 

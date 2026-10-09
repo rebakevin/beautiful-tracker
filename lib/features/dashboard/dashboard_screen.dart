@@ -33,6 +33,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   final _repository = TaskRepository();
 
   List<Task> _tasks = [];
+  List<Task> _attention = [];
   bool _loading = true;
   String? _error;
 
@@ -54,6 +55,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       if (!mounted) return;
       setState(() {
         _tasks = tasks;
+        _attention = _needsAttention(tasks);
         _loading = false;
         _error = null;
       });
@@ -82,8 +84,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   /// Overdue and at-risk tasks that are still open, earliest deadline first.
-  List<Task> get _needsAttention =>
-      _tasks
+  static List<Task> _needsAttention(List<Task> tasks) =>
+      tasks
           .where(
             (t) =>
                 t.status != TaskStatus.completed &&
@@ -102,12 +104,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       child: RefreshIndicator(
         onRefresh: _loadTasks,
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(
-            AppSpacing.screen,
-            AppSpacing.screen,
-            AppSpacing.screen,
-            AppSpacing.screen,
-          ),
+          padding: const EdgeInsets.all(AppSpacing.screen),
           children: [
             Row(
               children: [
@@ -176,7 +173,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ];
     }
 
-    final attention = _needsAttention;
+    final attention = _attention;
     final textTheme = Theme.of(context).textTheme;
 
     return [

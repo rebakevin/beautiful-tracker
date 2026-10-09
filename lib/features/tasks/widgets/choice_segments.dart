@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_palette.dart';
 
-/// Single-choice segmented control for an enum, e.g. priority or status.
 class ChoiceSegments<T> extends StatelessWidget {
   const ChoiceSegments({
     super.key,
@@ -11,7 +10,6 @@ class ChoiceSegments<T> extends StatelessWidget {
     required this.onChanged,
   });
 
-  /// Each value with the label shown for it.
   final List<(T, String)> options;
   final T selected;
   final ValueChanged<T> onChanged;

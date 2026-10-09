@@ -4,7 +4,6 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
 
-/// Summary card with one progress bar per task count, scaled to the total.
 class TaskStatsCard extends StatelessWidget {
   const TaskStatsCard({
     super.key,

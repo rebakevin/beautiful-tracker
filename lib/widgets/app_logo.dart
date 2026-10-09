@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../core/theme/app_palette.dart';
 
-/// Closed-eye smiley with a single sparkle, drawn from the SVG paths in
-/// design/design.html. Uses the palette accent so it turns mint in dark mode.
 class AppLogo extends StatelessWidget {
   const AppLogo({super.key, this.width = 102, this.color});
 

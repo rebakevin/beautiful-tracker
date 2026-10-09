@@ -1,9 +1,9 @@
 import 'package:beautiful_tracker/data/models/app_user.dart';
+import 'package:beautiful_tracker/data/repositories/member_repository.dart';
 import 'package:beautiful_tracker/data/repositories/user_repository.dart';
 import 'package:beautiful_tracker/data/services/account_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-/// In-memory stand-in for the SQLite-backed repository.
 class FakeUserRepository implements UserRepository {
   final _users = <int, AppUser>{};
   var _nextId = 1;
@@ -33,6 +33,28 @@ class FakeUserRepository implements UserRepository {
   Future<void> update(AppUser user) async => _users[user.id!] = user;
 }
 
+class FakeMemberRepository implements MemberRepository {
+  final emails = <String>[];
+
+  @override
+  Future<void> ensureExists({
+    required String name,
+    required String email,
+  }) async {
+    if (!emails.contains(email)) emails.add(email);
+  }
+
+  @override
+  Future<void> syncProfile({
+    required String oldEmail,
+    required String name,
+    required String email,
+  }) async {}
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
 Matcher throwsAccountError(AccountField field, String message) => throwsA(
   isA<AccountException>()
       .having((e) => e.field, 'field', field)
@@ -42,7 +64,12 @@ Matcher throwsAccountError(AccountField field, String message) => throwsA(
 void main() {
   late AccountService accounts;
 
-  setUp(() => accounts = AccountService(users: FakeUserRepository()));
+  setUp(
+    () => accounts = AccountService(
+      users: FakeUserRepository(),
+      members: FakeMemberRepository(),
+    ),
+  );
 
   group('signUp', () {
     test('creates an account and never stores the plain password', () async {

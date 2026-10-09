@@ -4,9 +4,6 @@ import '../core/theme/app_palette.dart';
 import '../core/theme/app_spacing.dart';
 import 'circle_icon_button.dart';
 
-/// Layout for edit forms opened from another screen: back button and centered
-/// title on top, scrollable fields in the middle, Cancel / Save pinned at the
-/// bottom.
 class FormPage extends StatelessWidget {
   const FormPage({
     super.key,

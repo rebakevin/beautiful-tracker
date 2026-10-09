@@ -3,8 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../member.dart';
 
-/// A tinted pill showing how many of a member's tasks are in a given status
-/// (e.g. "1 overdue"), color-coded by the status.
 class StatusBadge extends StatelessWidget {
   const StatusBadge({super.key, required this.status, required this.count});
 

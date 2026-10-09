@@ -17,8 +17,6 @@ Future<void> main() async {
   );
 }
 
-/// Loads the user saved by the last sign-in so the app opens straight to
-/// the dashboard. Falls back to the sign-in screen if that fails.
 Future<AppUser?> _restoreSession(PreferencesService preferences) async {
   final userId = preferences.currentUserId;
   if (userId == null) return null;

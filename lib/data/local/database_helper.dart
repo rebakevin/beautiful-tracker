@@ -3,11 +3,6 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 
-/// Single entry point to the local SQLite database.
-///
-/// The database is opened lazily on first access and the same instance is
-/// reused for the lifetime of the app.
-///
 /// Schema changes are numbered migrations in [_migrations]. A fresh install
 /// runs all of them; an existing install runs only the ones newer than its
 /// stored version. To change the schema, add a migration and bump [_version]

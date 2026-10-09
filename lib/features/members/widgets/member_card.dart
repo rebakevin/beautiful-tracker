@@ -7,7 +7,6 @@ import '../member.dart';
 import 'member_avatar.dart';
 import 'status_badge.dart';
 
-/// A tappable roster card: avatar, name/email/task summary, and a chevron.
 class MemberCard extends StatelessWidget {
   const MemberCard({super.key, required this.member, this.onTap});
 

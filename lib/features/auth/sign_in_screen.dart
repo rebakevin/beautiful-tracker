@@ -26,8 +26,6 @@ class _SignInScreenState extends State<SignInScreen> {
   final _passwordController = TextEditingController();
   final _accounts = AccountService();
 
-  // Errors from the account check (e.g. wrong password), shown under the
-  // field until the user edits it.
   String? _passwordError;
   bool _loading = false;
 
@@ -57,7 +55,6 @@ class _SignInScreenState extends State<SignInScreen> {
         password: _passwordController.text,
       );
       if (!mounted) return;
-      // The app swaps this screen for the dashboard.
       SessionScope.controllerOf(context).signedIn(user);
     } on AccountException catch (e) {
       setState(() => _passwordError = e.message);

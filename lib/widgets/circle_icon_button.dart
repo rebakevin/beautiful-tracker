@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../core/theme/app_palette.dart';
 
-/// 42 x 42 round outlined icon button, e.g. the back button on sub-pages.
 class CircleIconButton extends StatelessWidget {
   const CircleIconButton({
     super.key,
@@ -11,7 +10,6 @@ class CircleIconButton extends StatelessWidget {
     required this.tooltip,
   });
 
-  /// Back button that pops the current route.
   const CircleIconButton.back({super.key, this.onPressed})
     : icon = Icons.chevron_left_rounded,
       tooltip = 'Back';

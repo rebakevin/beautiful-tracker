@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_palette.dart';
 
-/// "New here? Create an account" / "Already have an account? Sign in".
-///
 /// A single rich text, so it wraps onto two lines on narrow screens or with
 /// large system font sizes instead of overflowing.
 class AuthSwitchLink extends StatefulWidget {

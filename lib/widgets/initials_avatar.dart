@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../core/theme/app_colors.dart';
 
-/// Round avatar showing a person's initials.
 class InitialsAvatar extends StatelessWidget {
   const InitialsAvatar({
     super.key,

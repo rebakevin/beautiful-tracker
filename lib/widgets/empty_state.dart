@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../core/theme/app_palette.dart';
 import '../core/theme/app_spacing.dart';
 
-/// Centered icon + message shown when a list or page has no content.
 class EmptyState extends StatelessWidget {
   const EmptyState({super.key, required this.icon, required this.message});
 

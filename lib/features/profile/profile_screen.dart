@@ -92,7 +92,6 @@ class ProfileScreen extends StatelessWidget {
   }
 }
 
-/// Rounded card with hairline dividers between its rows.
 class _SettingsCard extends StatelessWidget {
   const _SettingsCard({required this.children});
 

@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 
 import '../core/theme/app_spacing.dart';
 
-/// Field label above a [TextFormField], as used on every form in the design.
-///
 /// [validator] handles rules that can be checked on the device (empty, email
 /// format, length). [errorText] shows errors that come back after submitting,
 /// such as "Incorrect password"; clear it in [onChanged] when the user edits.
-class LabeledTextField extends StatelessWidget {
+class LabeledTextField extends StatefulWidget {
   const LabeledTextField({
     super.key,
     required this.label,
@@ -40,6 +38,13 @@ class LabeledTextField extends StatelessWidget {
   final bool enabled;
 
   @override
+  State<LabeledTextField> createState() => _LabeledTextFieldState();
+}
+
+class _LabeledTextFieldState extends State<LabeledTextField> {
+  bool _hidden = true;
+
+  @override
   Widget build(BuildContext context) {
     // MergeSemantics ties the visible label to the input, so screen readers
     // announce "Email, text field" instead of two unrelated items.
@@ -47,27 +52,41 @@ class LabeledTextField extends StatelessWidget {
   }
 
   Widget _buildField(BuildContext context) {
+    final obscured = widget.obscureText && _hidden;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: Theme.of(context).textTheme.labelLarge),
+        Text(widget.label, style: Theme.of(context).textTheme.labelLarge),
         const SizedBox(height: AppSpacing.xs),
         TextFormField(
-          controller: controller,
-          validator: validator,
-          forceErrorText: errorText,
-          onChanged: onChanged,
-          obscureText: obscureText,
-          enableSuggestions: !obscureText,
-          autocorrect: !obscureText,
-          keyboardType: keyboardType,
-          textInputAction: textInputAction,
-          textCapitalization: textCapitalization,
-          autofillHints: autofillHints,
-          onFieldSubmitted: onFieldSubmitted,
-          enabled: enabled,
+          controller: widget.controller,
+          validator: widget.validator,
+          forceErrorText: widget.errorText,
+          onChanged: widget.onChanged,
+          obscureText: obscured,
+          enableSuggestions: !widget.obscureText,
+          autocorrect: !widget.obscureText,
+          keyboardType: widget.keyboardType,
+          textInputAction: widget.textInputAction,
+          textCapitalization: widget.textCapitalization,
+          autofillHints: widget.autofillHints,
+          onFieldSubmitted: widget.onFieldSubmitted,
+          enabled: widget.enabled,
           style: Theme.of(context).textTheme.bodyLarge,
-          decoration: InputDecoration(hintText: hint),
+          decoration: InputDecoration(
+            hintText: widget.hint,
+            suffixIcon: widget.obscureText
+                ? IconButton(
+                    tooltip: _hidden ? 'Show password' : 'Hide password',
+                    icon: Icon(
+                      _hidden
+                          ? Icons.visibility_outlined
+                          : Icons.visibility_off_outlined,
+                    ),
+                    onPressed: () => setState(() => _hidden = !_hidden),
+                  )
+                : null,
+          ),
         ),
       ],
     );

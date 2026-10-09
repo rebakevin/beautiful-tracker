@@ -7,7 +7,6 @@ import '../../widgets/form_page.dart';
 import '../../widgets/labeled_text_field.dart';
 import '../../widgets/toast.dart';
 
-/// Change the signed-in user's name and email.
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
 

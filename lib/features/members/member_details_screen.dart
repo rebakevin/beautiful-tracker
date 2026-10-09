@@ -128,10 +128,7 @@ class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
                       overdue: _countOf(TaskStatus.overdue),
                     ),
                     const SizedBox(height: AppSpacing.section),
-                    _ActionRow(
-                      onEdit: _editMember,
-                      onRemove: _confirmRemove,
-                    ),
+                    _ActionRow(onEdit: _editMember, onRemove: _confirmRemove),
                     const SizedBox(height: AppSpacing.section),
                     Text(
                       'Assigned Tasks',
@@ -139,7 +136,9 @@ class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
                     ),
                     const SizedBox(height: AppSpacing.md),
                     const Padding(
-                      padding: EdgeInsets.symmetric(vertical: AppSpacing.section),
+                      padding: EdgeInsets.symmetric(
+                        vertical: AppSpacing.section,
+                      ),
                       child: EmptyState(
                         icon: Icons.task_alt_outlined,
                         message: 'No assigned tasks yet',
@@ -212,9 +211,13 @@ class _StatsRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Expanded(child: _StatCard(value: '$assigned', label: 'Assigned')),
+        Expanded(
+          child: _StatCard(value: '$assigned', label: 'Assigned'),
+        ),
         const SizedBox(width: AppSpacing.cardGap),
-        Expanded(child: _StatCard(value: '$completed', label: 'Completed')),
+        Expanded(
+          child: _StatCard(value: '$completed', label: 'Completed'),
+        ),
         const SizedBox(width: AppSpacing.cardGap),
         Expanded(
           child: _StatCard(

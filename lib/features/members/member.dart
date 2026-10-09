@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
 
-/// The health state of a member's tasks, used to color-code status badges.
 enum TaskStatus {
   overdue('overdue', AppColors.overdueBg, AppColors.overdueFg),
   atRisk('at risk', AppColors.atRiskBg, AppColors.atRiskFg),
@@ -16,7 +15,6 @@ enum TaskStatus {
   final Color foreground;
 }
 
-/// A count of tasks in a single TaskStatus.
 class TaskStatusCount {
   const TaskStatusCount(this.status, this.count);
 
@@ -24,7 +22,6 @@ class TaskStatusCount {
   final int count;
 }
 
-/// A team member shown in the members list.
 class Member {
   const Member({
     this.id,
@@ -42,8 +39,6 @@ class Member {
   final int taskCount;
   final List<TaskStatusCount> statuses;
 
-  /// Derives initials from a full name: the first character of each of the
-  /// first two names (so "Alice Uwase Mireille" becomes "AU").
   static String initialsFromName(String name) {
     final parts = name
         .trim()

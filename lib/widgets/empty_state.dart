@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../core/theme/app_colors.dart';
+import '../core/theme/app_palette.dart';
 import '../core/theme/app_spacing.dart';
 
-/// Centered icon + message shown when a list or page has no content.
 class EmptyState extends StatelessWidget {
   const EmptyState({super.key, required this.icon, required this.message});
 
@@ -16,7 +15,7 @@ class EmptyState extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 40, color: AppColors.muted),
+          Icon(icon, size: 40, color: context.palette.muted),
           const SizedBox(height: AppSpacing.md),
           Text(
             message,

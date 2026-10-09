@@ -39,6 +39,17 @@ class Member {
   final int taskCount;
   final List<TaskStatusCount> statuses;
 
+  Member copyWith({int? taskCount, List<TaskStatusCount>? statuses}) {
+    return Member(
+      id: id,
+      name: name,
+      email: email,
+      initials: initials,
+      taskCount: taskCount ?? this.taskCount,
+      statuses: statuses ?? this.statuses,
+    );
+  }
+
   static String initialsFromName(String name) {
     final parts = name
         .trim()

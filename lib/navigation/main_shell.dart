@@ -16,17 +16,22 @@ class MainShell extends StatefulWidget {
 class _MainShellState extends State<MainShell> {
   int _currentIndex = 0;
 
+  final _membersKey = GlobalKey<MembersScreenState>();
+
   // IndexedStack keeps every tab alive, so scroll position and inputs are
   // preserved when switching between tabs.
-  static const _pages = [
-    DashboardScreen(),
-    TasksScreen(),
-    MembersScreen(),
-    ProfileScreen(),
+  late final List<Widget> _pages = [
+    const DashboardScreen(),
+    const TasksScreen(),
+    MembersScreen(key: _membersKey),
+    const ProfileScreen(),
   ];
 
   void _onTabSelected(int index) {
     setState(() => _currentIndex = index);
+    if (index == 2) {
+      _membersKey.currentState?.reload();
+    }
   }
 
   @override

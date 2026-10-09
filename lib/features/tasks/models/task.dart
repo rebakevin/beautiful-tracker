@@ -16,7 +16,7 @@ enum TaskStatus {
   final String label;
 }
 
-/// SLA status. Chosen manually for now; the automatic logic comes later.
+/// SLA status, derived automatically from a task's workflow status and due
 enum SlaStatus {
   onTrack('On Track'),
   atRisk('At Risk'),
@@ -25,6 +25,26 @@ enum SlaStatus {
 
   const SlaStatus(this.label);
   final String label;
+}
+
+/// A task enters "At Risk" when its deadline is within 3 days (and it
+/// is not completed yet).
+const int slaRiskThresholdDays = 3;
+
+SlaStatus resolveSla({
+  required TaskStatus status,
+  required DateTime dueDate,
+  required DateTime now,
+}) {
+  if (status == TaskStatus.completed) return SlaStatus.completed;
+
+  final today = DateTime(now.year, now.month, now.day);
+  final due = DateTime(dueDate.year, dueDate.month, dueDate.day);
+  final daysUntilDue = due.difference(today).inDays;
+
+  if (daysUntilDue < 0) return SlaStatus.overdue;
+  if (daysUntilDue <= slaRiskThresholdDays) return SlaStatus.atRisk;
+  return SlaStatus.onTrack;
 }
 
 class Task {
@@ -36,7 +56,6 @@ class Task {
     required this.dueDate,
     this.priority = TaskPriority.medium,
     this.status = TaskStatus.todo,
-    this.sla = SlaStatus.onTrack,
   });
 
   final int? id; // null until the database assigns one
@@ -46,7 +65,8 @@ class Task {
   final DateTime dueDate;
   final TaskPriority priority;
   final TaskStatus status;
-  final SlaStatus sla;
+
+  SlaStatus get sla => resolveSla(status: status, dueDate: dueDate, now: DateTime.now());
 
   /// Converts the task into a row that SQLite can store.
   Map<String, Object?> toMap() => {
@@ -57,7 +77,6 @@ class Task {
     'due_date': dueDate.toIso8601String(),
     'priority': priority.name,
     'status': status.name,
-    'sla_status': sla.name,
   };
 
   /// Builds a task from a row read out of SQLite.
@@ -69,7 +88,6 @@ class Task {
     dueDate: DateTime.parse(map['due_date'] as String),
     priority: TaskPriority.values.byName(map['priority'] as String),
     status: TaskStatus.values.byName(map['status'] as String),
-    sla: SlaStatus.values.byName(map['sla_status'] as String),
   );
 
   /// Returns a copy with some fields changed (used when editing).
@@ -80,7 +98,6 @@ class Task {
     DateTime? dueDate,
     TaskPriority? priority,
     TaskStatus? status,
-    SlaStatus? sla,
   }) => Task(
     id: id,
     title: title ?? this.title,
@@ -89,6 +106,5 @@ class Task {
     dueDate: dueDate ?? this.dueDate,
     priority: priority ?? this.priority,
     status: status ?? this.status,
-    sla: sla ?? this.sla,
   );
 }

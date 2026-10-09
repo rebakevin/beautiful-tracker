@@ -16,23 +16,33 @@ class MainShell extends StatefulWidget {
 class _MainShellState extends State<MainShell> {
   int _currentIndex = 0;
 
-  // IndexedStack keeps every tab alive, so scroll position and inputs are
-  // preserved when switching between tabs.
-  static const _pages = [
-    DashboardScreen(),
-    TasksScreen(),
-    MembersScreen(),
-    ProfileScreen(),
-  ];
+  // Bumped whenever the dashboard tab is selected so it reloads its data.
+  int _dashboardRefresh = 0;
 
   void _onTabSelected(int index) {
-    setState(() => _currentIndex = index);
+    setState(() {
+      _currentIndex = index;
+      if (index == 0) _dashboardRefresh++;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(index: _currentIndex, children: _pages),
+      // IndexedStack keeps every tab alive, so scroll position and inputs are
+      // preserved when switching between tabs.
+      body: IndexedStack(
+        index: _currentIndex,
+        children: [
+          DashboardScreen(
+            refreshToken: _dashboardRefresh,
+            onViewAllTasks: () => _onTabSelected(1),
+          ),
+          const TasksScreen(),
+          const MembersScreen(),
+          const ProfileScreen(),
+        ],
+      ),
       bottomNavigationBar: DecoratedBox(
         decoration: BoxDecoration(
           border: Border(top: BorderSide(color: context.palette.hairline)),

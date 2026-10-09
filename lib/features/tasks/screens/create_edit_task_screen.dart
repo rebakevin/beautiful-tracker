@@ -85,6 +85,77 @@ class _CreateEditTaskScreenState extends State<CreateEditTaskScreen> {
     }
   }
 
+  Future<void> _pickSla() async {
+    final picked = await showModalBottomSheet<SlaStatus>(
+      context: context,
+      backgroundColor: AppColors.surface,
+      showDragHandle: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(AppRadius.sheet),
+        ),
+      ),
+      builder: (context) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.screen,
+            0,
+            AppSpacing.screen,
+            AppSpacing.screen,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                child: Text(
+                  'SLA status',
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+              ),
+              for (final s in SlaStatus.values)
+                InkWell(
+                  onTap: () => Navigator.of(context).pop(s),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: AppSpacing.cardGap,
+                    ),
+                    decoration: const BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(color: AppColors.hairline),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            s.label,
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: s == _sla
+                                  ? FontWeight.w700
+                                  : FontWeight.w500,
+                              color: s == _sla
+                                  ? AppColors.primary
+                                  : AppColors.ink,
+                            ),
+                          ),
+                        ),
+                        if (s == _sla)
+                          const Icon(Icons.check, color: AppColors.primary),
+                      ],
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+    if (picked != null) setState(() => _sla = picked);
+  }
+
   @override
   void dispose() {
     _title.dispose();
@@ -301,16 +372,21 @@ class _CreateEditTaskScreenState extends State<CreateEditTaskScreen> {
               ),
               _field(
                 'SLA status (set manually for now)',
-                DropdownButtonFormField<SlaStatus>(
-                  initialValue: _sla,
-                  decoration: _decoration(),
-                  items: [
-                    for (final s in SlaStatus.values)
-                      DropdownMenuItem(value: s, child: Text(s.label)),
-                  ],
-                  onChanged: (value) {
-                    if (value != null) setState(() => _sla = value);
-                  },
+                InkWell(
+                  borderRadius: BorderRadius.circular(AppRadius.field),
+                  onTap: _pickSla,
+                  child: InputDecorator(
+                    decoration: _decoration(
+                      suffixIcon: const Icon(Icons.keyboard_arrow_down),
+                    ),
+                    child: Text(
+                      _sla.label,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: AppColors.ink,
+                      ),
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(height: AppSpacing.sm),

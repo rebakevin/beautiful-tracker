@@ -228,7 +228,7 @@ class _TasksScreenState extends State<TasksScreen> {
           active: _assigneeFilter != null,
         ),
         const Spacer(),
-        if (_statusFilter != null && _assigneeFilter != null)
+        if (_statusFilter != null || _assigneeFilter != null)
           TextButton(
             onPressed: () => setState(() {
               _statusFilter = null;

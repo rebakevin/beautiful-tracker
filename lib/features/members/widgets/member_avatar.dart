@@ -3,7 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/app_colors.dart';
 
-/// A butter-yellow circle with the member's initials in dark brown-olive.
 class MemberAvatar extends StatelessWidget {
   const MemberAvatar({super.key, required this.initials, this.size = 48});
 

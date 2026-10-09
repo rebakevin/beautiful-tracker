@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../core/theme/app_colors.dart';
+import '../core/theme/app_palette.dart';
 import '../features/dashboard/dashboard_screen.dart';
 import '../features/members/members_screen.dart';
 import '../features/profile/profile_screen.dart';
 import '../features/tasks/tasks_screen.dart';
 
-/// Root screen after sign-in: hosts the four main tabs behind a bottom
-/// navigation bar.
 class MainShell extends StatefulWidget {
   const MainShell({super.key});
 
@@ -36,8 +34,8 @@ class _MainShellState extends State<MainShell> {
     return Scaffold(
       body: IndexedStack(index: _currentIndex, children: _pages),
       bottomNavigationBar: DecoratedBox(
-        decoration: const BoxDecoration(
-          border: Border(top: BorderSide(color: AppColors.hairline)),
+        decoration: BoxDecoration(
+          border: Border(top: BorderSide(color: context.palette.hairline)),
         ),
         child: NavigationBar(
           selectedIndex: _currentIndex,

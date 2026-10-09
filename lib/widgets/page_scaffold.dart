@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../core/theme/app_spacing.dart';
 
-/// Shared layout for the main tab pages: a page title followed by scrollable
-/// content, padded to the screen margin.
 class PageScaffold extends StatelessWidget {
   const PageScaffold({
     super.key,

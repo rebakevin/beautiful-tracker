@@ -1,10 +1,6 @@
 import '../../features/members/member.dart';
 import '../local/database_helper.dart';
 
-/// Translates between [Member] objects and the `members` table.
-///
-/// This is the only place SQL for members lives, keeping the UI free of
-/// storage details.
 class MemberRepository {
   const MemberRepository();
 
@@ -30,6 +26,42 @@ class MemberRepository {
   Future<int> delete(int id) async {
     final db = await DatabaseHelper.instance.database;
     return db.delete('members', where: 'id = ?', whereArgs: [id]);
+  }
+
+  /// Makes sure a member with [email] exists, adding one if not. Used so a
+  /// signed-in account always appears in the team list.
+  Future<void> ensureExists({
+    required String name,
+    required String email,
+  }) async {
+    final db = await DatabaseHelper.instance.database;
+    final found = await db.query(
+      'members',
+      columns: ['id'],
+      where: 'email = ? COLLATE NOCASE',
+      whereArgs: [email],
+      limit: 1,
+    );
+    if (found.isNotEmpty) return;
+    await db.insert('members', {
+      'name': name,
+      'email': email,
+      'initials': Member.initialsFromName(name),
+    });
+  }
+
+  Future<void> syncProfile({
+    required String oldEmail,
+    required String name,
+    required String email,
+  }) async {
+    final db = await DatabaseHelper.instance.database;
+    await db.update(
+      'members',
+      {'name': name, 'email': email, 'initials': Member.initialsFromName(name)},
+      where: 'email = ? COLLATE NOCASE',
+      whereArgs: [oldEmail],
+    );
   }
 
   Future<List<Member>> fetchAll() async {

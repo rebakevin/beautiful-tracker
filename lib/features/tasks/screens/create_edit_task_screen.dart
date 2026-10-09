@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
-import '../../members/data/member_repository.dart';
-import '../../members/models/member.dart';
+import '../../../data/repositories/member_repository.dart';
+import '../../members/member.dart' show Member;
 import '../../members/widgets/member_picker_sheet.dart';
 import '../data/task_repository.dart';
 import '../models/task.dart';
@@ -23,7 +23,7 @@ class CreateEditTaskScreen extends StatefulWidget {
 class _CreateEditTaskScreenState extends State<CreateEditTaskScreen> {
   final _formKey = GlobalKey<FormState>();
   final _repository = TaskRepository();
-  final _memberRepository = MemberRepository();
+  final _memberRepository = const MemberRepository();
 
   late final TextEditingController _title;
   late final TextEditingController _description;
@@ -57,7 +57,7 @@ class _CreateEditTaskScreenState extends State<CreateEditTaskScreen> {
   Future<void> _pickAssignee(FormFieldState<String> field) async {
     List<Member> members;
     try {
-      members = await _memberRepository.getAll();
+      members = await _memberRepository.fetchAll();
     } catch (_) {
       members = [];
     }

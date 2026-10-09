@@ -92,8 +92,7 @@ class _MembersScreenState extends State<MembersScreen> {
     }
     return ListView.separated(
       itemCount: _members.length,
-      separatorBuilder: (_, _) =>
-          const SizedBox(height: AppSpacing.listGap),
+      separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.listGap),
       itemBuilder: (context, index) {
         final member = _members[index];
         return MemberCard(
@@ -187,10 +186,7 @@ class _EmptyMembersState extends StatelessWidget {
             ),
           ),
           const SizedBox(height: AppSpacing.section),
-          Text(
-            'No members yet',
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
+          Text('No members yet', style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: AppSpacing.sm),
           Text(
             'Add your first team member to get started',

@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../members/data/member_repository.dart';
+import '../../members/models/member.dart';
+import '../../members/widgets/member_picker_sheet.dart';
 import '../data/task_repository.dart';
 import '../models/task.dart';
 import '../utils/task_date.dart';
-
-const _teamMembers = ['Keira', 'Victor', 'Annie', 'Kevin'];
 
 /// Form used both to create a task and to edit an existing one.
 
@@ -22,6 +23,7 @@ class CreateEditTaskScreen extends StatefulWidget {
 class _CreateEditTaskScreenState extends State<CreateEditTaskScreen> {
   final _formKey = GlobalKey<FormState>();
   final _repository = TaskRepository();
+  final _memberRepository = MemberRepository();
 
   late final TextEditingController _title;
   late final TextEditingController _description;
@@ -50,6 +52,37 @@ class _CreateEditTaskScreenState extends State<CreateEditTaskScreen> {
     _priority = t?.priority ?? TaskPriority.medium;
     _status = t?.status ?? TaskStatus.todo;
     _sla = t?.sla ?? SlaStatus.onTrack;
+  }
+
+  Future<void> _pickAssignee(FormFieldState<String> field) async {
+    List<Member> members;
+    try {
+      members = await _memberRepository.getAll();
+    } catch (_) {
+      members = [];
+    }
+    if (!mounted) return;
+    final picked = await showModalBottomSheet<MemberPick>(
+      context: context,
+      backgroundColor: AppColors.surface,
+      showDragHandle: true,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(AppRadius.sheet),
+        ),
+      ),
+      builder: (_) => MemberPickerSheet(
+        title: 'Assign to',
+        members: members,
+        selected: _assignee,
+      ),
+    );
+    final name = picked?.name;
+    if (name != null) {
+      setState(() => _assignee = name);
+      field.didChange(name);
+    }
   }
 
   @override
@@ -161,7 +194,6 @@ class _CreateEditTaskScreenState extends State<CreateEditTaskScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final members = {..._teamMembers, ?_assignee}.toList();
     return Scaffold(
       appBar: AppBar(
         title: Text(_isEditing ? 'Edit Task' : 'Create Task'),
@@ -202,16 +234,28 @@ class _CreateEditTaskScreenState extends State<CreateEditTaskScreen> {
               ),
               _field(
                 'Assign to',
-                DropdownButtonFormField<String>(
+                FormField<String>(
                   initialValue: _assignee,
-                  decoration: _decoration(hint: 'Select team member'),
-                  items: [
-                    for (final m in members)
-                      DropdownMenuItem(value: m, child: Text(m)),
-                  ],
-                  onChanged: (value) => setState(() => _assignee = value),
                   validator: (value) =>
                       value == null ? 'Choose who this task is for' : null,
+                  builder: (field) => InkWell(
+                    borderRadius: BorderRadius.circular(AppRadius.field),
+                    onTap: () => _pickAssignee(field),
+                    child: InputDecorator(
+                      decoration: _decoration(
+                        suffixIcon: const Icon(Icons.keyboard_arrow_down),
+                      ).copyWith(errorText: field.errorText),
+                      child: Text(
+                        _assignee ?? 'Select team member',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: _assignee == null
+                              ? AppColors.muted
+                              : AppColors.ink,
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               ),
               _field(

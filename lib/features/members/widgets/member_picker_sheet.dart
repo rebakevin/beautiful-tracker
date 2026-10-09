@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
-import '../models/member.dart';
+import '../member.dart' show Member;
 
 /// Result of [MemberPickerSheet]; [name] is null when "All" was picked.
 class MemberPick {

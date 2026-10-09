@@ -1,4 +1,3 @@
-/// Spacing and radius scale from design/design-system.html.
 class AppSpacing {
   AppSpacing._();
 

@@ -1,3 +1,4 @@
+import '../../features/members/data/member_table.dart';
 import '../../features/tasks/data/task_table.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -13,7 +14,7 @@ class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._();
 
   static const _databaseName = 'beautiful_tracker.db';
-  static const _version = 2;
+  static const _version = 3;
 
   Database? _database;
 
@@ -29,7 +30,15 @@ class DatabaseHelper {
       onConfigure: _onConfigure,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
+      onOpen: _onOpen,
     );
+  }
+
+  /// Safety net for databases created before the tasks table existed at the
+  /// current version: a missing table is created instead of failing every query.
+  Future<void> _onOpen(Database db) async {
+    await TaskTable.create(db);
+    await MemberTable.create(db);
   }
 
   Future<void> _onConfigure(Database db) async {
@@ -39,11 +48,15 @@ class DatabaseHelper {
 
   Future<void> _onCreate(Database db, int version) async {
     await TaskTable.create(db);
+    await MemberTable.create(db);
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
     if (oldVersion < 2) {
       await TaskTable.create(db);
+    }
+    if (oldVersion < 3) {
+      await MemberTable.create(db);
     }
   }
 

@@ -5,10 +5,17 @@ import '../core/theme/app_spacing.dart';
 /// Shared layout for the main tab pages: a page title followed by scrollable
 /// content, padded to the screen margin.
 class PageScaffold extends StatelessWidget {
-  const PageScaffold({super.key, required this.title, required this.child});
+  const PageScaffold({
+    super.key,
+    required this.title,
+    required this.child,
+    this.actions,
+  });
 
   final String title;
   final Widget child;
+
+  final Widget? actions;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +31,20 @@ class PageScaffold extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(title, style: Theme.of(context).textTheme.headlineMedium),
+            if (actions == null)
+              Text(title, style: Theme.of(context).textTheme.headlineMedium)
+            else
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      title,
+                      style: Theme.of(context).textTheme.headlineMedium,
+                    ),
+                  ),
+                  actions!,
+                ],
+              ),
             const SizedBox(height: AppSpacing.section),
             Expanded(child: child),
           ],

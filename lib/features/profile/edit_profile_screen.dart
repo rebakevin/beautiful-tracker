@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../core/session/session_scope.dart';
 import '../../core/utils/validators.dart';
 import '../../data/services/account_service.dart';
+import '../../data/services/avatar_storage.dart';
 import '../../widgets/form_page.dart';
 import '../../widgets/labeled_text_field.dart';
 import '../../widgets/toast.dart';
+import 'widgets/avatar_editor.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -17,8 +20,13 @@ class EditProfileScreen extends StatefulWidget {
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final _formKey = GlobalKey<FormState>();
   final _accounts = AccountService();
+  final _avatars = const AvatarStorage();
   late final TextEditingController _nameController;
   late final TextEditingController _emailController;
+
+  // Photo choices are applied when the form is saved, not when picked.
+  XFile? _newPhoto;
+  bool _photoRemoved = false;
 
   String? _emailError;
   bool _saving = false;
@@ -51,19 +59,29 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final user = SessionScope.readUser(context);
     final controller = SessionScope.controllerOf(context);
     setState(() => _saving = true);
+    String? savedPhoto;
     try {
+      final newPhoto = _newPhoto;
+      if (newPhoto != null) {
+        savedPhoto = await _avatars.save(newPhoto, userId: user.id!);
+      }
+      final avatarPath = savedPhoto ?? (_photoRemoved ? null : user.avatarPath);
       final updated = await _accounts.updateProfile(
         user,
         name: _nameController.text,
         email: _emailController.text,
+        avatarPath: avatarPath,
       );
+      if (avatarPath != user.avatarPath) await _avatars.delete(user.avatarPath);
       if (!mounted) return;
       controller.userUpdated(updated);
       showToast(context, 'Profile updated');
       Navigator.of(context).pop();
     } on AccountException catch (e) {
+      await _avatars.delete(savedPhoto);
       setState(() => _emailError = e.message);
     } catch (e) {
+      await _avatars.delete(savedPhoto);
       debugPrint('Profile update failed: $e');
       if (mounted) showToast(context, 'Could not save. Please try again.');
     } finally {
@@ -73,6 +91,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final user = SessionScope.readUser(context);
+    final photoPath =
+        _newPhoto?.path ?? (_photoRemoved ? null : user.avatarPath);
+
     return Form(
       key: _formKey,
       autovalidateMode: _autovalidate,
@@ -81,6 +103,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         onSave: _save,
         saving: _saving,
         children: [
+          AvatarEditor(
+            initials: user.initials,
+            imagePath: photoPath,
+            onPicked: (photo) => setState(() {
+              _newPhoto = photo;
+              _photoRemoved = false;
+            }),
+            onRemoved: () => setState(() {
+              _newPhoto = null;
+              _photoRemoved = true;
+            }),
+          ),
           LabeledTextField(
             label: 'Name',
             controller: _nameController,

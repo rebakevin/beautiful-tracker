@@ -6,6 +6,7 @@ class AppUser {
     required this.passwordHash,
     required this.passwordSalt,
     required this.createdAt,
+    this.avatarPath,
   });
 
   final int? id;
@@ -14,6 +15,8 @@ class AppUser {
   final String passwordHash;
   final String passwordSalt;
   final DateTime createdAt;
+
+  final String? avatarPath;
 
   String get initials {
     final parts = name.trim().split(RegExp(r'\s+')).where((p) => p.isNotEmpty);
@@ -29,6 +32,8 @@ class AppUser {
     String? email,
     String? passwordHash,
     String? passwordSalt,
+    String? avatarPath,
+    bool clearAvatar = false,
   }) {
     return AppUser(
       id: id ?? this.id,
@@ -37,6 +42,7 @@ class AppUser {
       passwordHash: passwordHash ?? this.passwordHash,
       passwordSalt: passwordSalt ?? this.passwordSalt,
       createdAt: createdAt,
+      avatarPath: clearAvatar ? null : (avatarPath ?? this.avatarPath),
     );
   }
 
@@ -47,6 +53,7 @@ class AppUser {
     'password_hash': passwordHash,
     'password_salt': passwordSalt,
     'created_at': createdAt.toIso8601String(),
+    'avatar_path': avatarPath,
   };
 
   factory AppUser.fromMap(Map<String, Object?> map) => AppUser(
@@ -56,5 +63,6 @@ class AppUser {
     passwordHash: map['password_hash'] as String,
     passwordSalt: map['password_salt'] as String,
     createdAt: DateTime.parse(map['created_at'] as String),
+    avatarPath: map['avatar_path'] as String?,
   );
 }

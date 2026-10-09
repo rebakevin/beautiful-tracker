@@ -43,7 +43,6 @@ class SlaBadge extends StatelessWidget {
   }
 }
 
-/// Neutral outlined pill used for task status and priority.
 class NeutralPill extends StatelessWidget {
   const NeutralPill({super.key, required this.label});
 

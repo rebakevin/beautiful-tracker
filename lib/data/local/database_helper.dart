@@ -15,7 +15,7 @@ class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._();
 
   static const _databaseName = 'beautiful_tracker.db';
-  static const _version = 4;
+  static const _version = 5;
 
   Database? _database;
 
@@ -85,6 +85,28 @@ class DatabaseHelper {
       )
     '''),
     4: TaskTable.create,
+    5: (db) async {
+      // SLA is derived now, so drop the column. Recreate the table rather than
+      // ALTER TABLE ... DROP COLUMN, which needs SQLite 3.35+ (Android 13+).
+      await db.execute('''
+        CREATE TABLE tasks_new (
+          id          INTEGER PRIMARY KEY AUTOINCREMENT,
+          title       TEXT NOT NULL,
+          description TEXT NOT NULL DEFAULT '',
+          assignee    TEXT NOT NULL,
+          due_date    TEXT NOT NULL,
+          priority    TEXT NOT NULL,
+          status      TEXT NOT NULL
+        )
+      ''');
+      await db.execute('''
+        INSERT INTO tasks_new (id, title, description, assignee, due_date, priority, status)
+        SELECT id, title, description, assignee, due_date, priority, status
+        FROM tasks
+      ''');
+      await db.execute('DROP TABLE tasks');
+      await db.execute('ALTER TABLE tasks_new RENAME TO tasks');
+    },
   };
 
   Future<void> close() async {

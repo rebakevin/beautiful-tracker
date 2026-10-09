@@ -7,8 +7,12 @@ import '../../data/repositories/member_repository.dart';
 import '../../widgets/confirm_dialog.dart';
 import '../../widgets/empty_state.dart';
 import '../../widgets/screen_top_bar.dart';
+import '../tasks/data/task_repository.dart';
+import '../tasks/models/task.dart';
+import '../tasks/screens/task_details_screen.dart';
+import '../tasks/widgets/task_card.dart';
 import 'add_member_screen.dart';
-import 'member.dart';
+import 'member.dart' show Member;
 import 'widgets/member_avatar.dart';
 
 const _dangerOutline = Color(0xFFF3BDB9);
@@ -24,20 +28,68 @@ class MemberDetailsScreen extends StatefulWidget {
 
 class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
   final _repository = const MemberRepository();
+  final _taskRepository = TaskRepository();
   late Member _member;
+  List<Task> _tasks = [];
+  bool _loadingTasks = true;
 
   @override
   void initState() {
     super.initState();
     _member = widget.member;
+    _loadTasks();
   }
 
-  int _countOf(TaskStatus status) {
-    var total = 0;
-    for (final s in _member.statuses) {
-      if (s.status == status) total += s.count;
+  Future<void> _loadTasks() async {
+    try {
+      final tasks = await _taskRepository.getAll();
+      if (!mounted) return;
+      setState(() {
+        _tasks = tasks
+            .where((task) => task.assignee == _member.name)
+            .toList();
+        _loadingTasks = false;
+      });
+    } catch (error) {
+      if (!mounted) return;
+      debugPrint('Failed to load tasks: $error');
+      setState(() => _loadingTasks = false);
     }
-    return total;
+  }
+
+  Future<void> _openTaskDetails(Task task) async {
+    final changed = await Navigator.of(context).push<bool>(
+      MaterialPageRoute<bool>(builder: (_) => TaskDetailsScreen(task: task)),
+    );
+    if (changed == true) await _loadTasks();
+  }
+
+  Widget _buildAssignedTasks() {
+    if (_loadingTasks) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: AppSpacing.section),
+        child: Center(child: CircularProgressIndicator()),
+      );
+    }
+    if (_tasks.isEmpty) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: AppSpacing.section),
+        child: EmptyState(
+          icon: Icons.task_alt_outlined,
+          message: 'No assigned tasks yet',
+        ),
+      );
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        for (final task in _tasks)
+          Padding(
+            padding: const EdgeInsets.only(bottom: AppSpacing.listGap),
+            child: TaskCard(task: task, onTap: () => _openTaskDetails(task)),
+          ),
+      ],
+    );
   }
 
   Future<void> _editMember() async {
@@ -95,9 +147,13 @@ class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
                     _ProfileHeader(member: _member),
                     const SizedBox(height: AppSpacing.section),
                     _StatsRow(
-                      assigned: _member.taskCount,
-                      completed: _countOf(TaskStatus.done),
-                      overdue: _countOf(TaskStatus.overdue),
+                      assigned: _tasks.length,
+                      completed: _tasks
+                          .where((t) => t.status == TaskStatus.completed)
+                          .length,
+                      overdue: _tasks
+                          .where((t) => t.sla == SlaStatus.overdue)
+                          .length,
                     ),
                     const SizedBox(height: AppSpacing.section),
                     _ActionRow(onEdit: _editMember, onRemove: _confirmRemove),
@@ -107,15 +163,7 @@ class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                     const SizedBox(height: AppSpacing.md),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(
-                        vertical: AppSpacing.section,
-                      ),
-                      child: EmptyState(
-                        icon: Icons.task_alt_outlined,
-                        message: 'No assigned tasks yet',
-                      ),
-                    ),
+                    _buildAssignedTasks(),
                   ],
                 ),
               ),

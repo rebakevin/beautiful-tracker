@@ -17,12 +17,16 @@ class _MainShellState extends State<MainShell> {
   int _currentIndex = 0;
 
   int _dashboardRefresh = 0;
+  final _membersKey = GlobalKey<MembersScreenState>();
 
   void _onTabSelected(int index) {
     setState(() {
       _currentIndex = index;
       if (index == 0) _dashboardRefresh++;
     });
+    if (index == 2) {
+      _membersKey.currentState?.reload();
+    }
   }
 
   @override
@@ -38,7 +42,7 @@ class _MainShellState extends State<MainShell> {
             onViewAllTasks: () => _onTabSelected(1),
           ),
           const TasksScreen(),
-          const MembersScreen(),
+          MembersScreen(key: _membersKey),
           const ProfileScreen(),
         ],
       ),

@@ -13,6 +13,7 @@ const _months = [
   'Dec',
 ];
 
-/// Formats a date like "9 Oct 2026" for task screens.
 String formatTaskDate(DateTime d) =>
     '${d.day} ${_months[d.month - 1]} ${d.year}';
+
+String formatTaskDateShort(DateTime d) => '${_months[d.month - 1]} ${d.day}';

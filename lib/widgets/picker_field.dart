@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../core/theme/app_palette.dart';
 import '../core/theme/app_spacing.dart';
 
-/// A label above any form control (the label style of [LabeledTextField]).
 class LabeledField extends StatelessWidget {
   const LabeledField({super.key, required this.label, required this.child});
 
@@ -23,7 +22,6 @@ class LabeledField extends StatelessWidget {
   }
 }
 
-/// Looks like a text box but opens a picker (sheet or dialog) when tapped.
 class PickerField extends StatelessWidget {
   const PickerField({
     super.key,
@@ -37,7 +35,6 @@ class PickerField extends StatelessWidget {
   final String text;
   final VoidCallback onTap;
 
-  /// Shows [text] in the muted hint color.
   final bool isPlaceholder;
   final String? errorText;
   final IconData icon;

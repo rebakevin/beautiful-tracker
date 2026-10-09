@@ -16,7 +16,6 @@ class AppUser {
   final String passwordSalt;
   final DateTime createdAt;
 
-  /// Photo stored on this device, or null to show initials.
   final String? avatarPath;
 
   String get initials {

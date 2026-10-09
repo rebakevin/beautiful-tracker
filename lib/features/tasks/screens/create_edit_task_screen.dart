@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/theme/app_palette.dart';
-import '../../../core/theme/app_spacing.dart';
+import '../../../widgets/app_sheet.dart';
 import '../../../widgets/form_page.dart';
 import '../../../widgets/labeled_text_field.dart';
 import '../../../widgets/option_picker_sheet.dart';
@@ -13,8 +12,6 @@ import '../data/task_repository.dart';
 import '../models/task.dart';
 import '../utils/task_date.dart';
 import '../widgets/choice_segments.dart';
-
-/// Form used both to create a task and to edit an existing one.
 
 class CreateEditTaskScreen extends StatefulWidget {
   const CreateEditTaskScreen({super.key, this.task});
@@ -67,16 +64,9 @@ class _CreateEditTaskScreenState extends State<CreateEditTaskScreen> {
       members = [];
     }
     if (!mounted) return;
-    final picked = await showModalBottomSheet<MemberPick>(
-      context: context,
-      backgroundColor: context.palette.surface,
-      showDragHandle: true,
+    final picked = await showAppSheet<MemberPick>(
+      context,
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(AppRadius.sheet),
-        ),
-      ),
       builder: (_) => MemberPickerSheet(
         title: 'Assign to',
         members: members,

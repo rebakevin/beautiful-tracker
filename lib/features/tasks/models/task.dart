@@ -48,7 +48,6 @@ class Task {
   final TaskStatus status;
   final SlaStatus sla;
 
-  /// Converts the task into a row that SQLite can store.
   Map<String, Object?> toMap() => {
     if (id != null) 'id': id,
     'title': title,
@@ -60,7 +59,6 @@ class Task {
     'sla_status': sla.name,
   };
 
-  /// Builds a task from a row read out of SQLite.
   factory Task.fromMap(Map<String, Object?> map) => Task(
     id: map['id'] as int?,
     title: map['title'] as String,
@@ -72,7 +70,6 @@ class Task {
     sla: SlaStatus.values.byName(map['sla_status'] as String),
   );
 
-  /// Returns a copy with some fields changed (used when editing).
   Task copyWith({
     String? title,
     String? description,

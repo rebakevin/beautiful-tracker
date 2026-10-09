@@ -2,24 +2,16 @@ import 'package:flutter/material.dart';
 
 import '../core/theme/app_palette.dart';
 import '../core/theme/app_spacing.dart';
+import 'app_sheet.dart';
 
-/// Bottom sheet listing [options]; resolves to the tapped one, or null if
-/// dismissed. The row matching [selected] is highlighted with a check.
 Future<T?> showOptionPickerSheet<T>(
   BuildContext context, {
   required String title,
   required List<(T, String)> options,
   T? selected,
 }) {
-  return showModalBottomSheet<T>(
-    context: context,
-    backgroundColor: context.palette.surface,
-    showDragHandle: true,
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(
-        top: Radius.circular(AppRadius.sheet),
-      ),
-    ),
+  return showAppSheet<T>(
+    context,
     builder: (context) => SafeArea(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(

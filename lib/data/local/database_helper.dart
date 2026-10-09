@@ -3,6 +3,8 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 
+import '../../features/tasks/data/task_table.dart';
+
 /// Schema changes are numbered migrations in [_migrations]. A fresh install
 /// runs all of them; an existing install runs only the ones newer than its
 /// stored version. To change the schema, add a migration and bump [_version]
@@ -13,7 +15,7 @@ class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._();
 
   static const _databaseName = 'beautiful_tracker.db';
-  static const _version = 3;
+  static const _version = 4;
 
   Database? _database;
 
@@ -33,8 +35,13 @@ class DatabaseHelper {
       onConfigure: _onConfigure,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
+      onOpen: _onOpen,
     );
   }
+
+  /// Safety net for databases created before the tasks table existed at the
+  /// current version: a missing table is created instead of failing every query.
+  Future<void> _onOpen(Database db) => TaskTable.create(db);
 
   Future<void> _onConfigure(Database db) async {
     // SQLite has foreign keys off by default; tasks will reference members.
@@ -77,6 +84,7 @@ class DatabaseHelper {
         created_at TEXT NOT NULL
       )
     '''),
+    4: TaskTable.create,
   };
 
   Future<void> close() async {

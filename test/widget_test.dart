@@ -81,7 +81,7 @@ void main() {
 
     await tester.tap(find.text('Tasks'));
     await tester.pumpAndSettle();
-    expect(find.text('No tasks yet.'), findsOneWidget);
+    expect(find.text('Add Task'), findsOneWidget);
 
     await tester.tap(find.text('Members'));
     await tester.pumpAndSettle();

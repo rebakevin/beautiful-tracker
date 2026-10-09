@@ -3,10 +3,17 @@ import 'package:flutter/material.dart';
 import '../core/theme/app_spacing.dart';
 
 class PageScaffold extends StatelessWidget {
-  const PageScaffold({super.key, required this.title, required this.child});
+  const PageScaffold({
+    super.key,
+    required this.title,
+    required this.child,
+    this.actions,
+  });
 
   final String title;
   final Widget child;
+
+  final Widget? actions;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +29,20 @@ class PageScaffold extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(title, style: Theme.of(context).textTheme.headlineMedium),
+            if (actions == null)
+              Text(title, style: Theme.of(context).textTheme.headlineMedium)
+            else
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      title,
+                      style: Theme.of(context).textTheme.headlineMedium,
+                    ),
+                  ),
+                  actions!,
+                ],
+              ),
             const SizedBox(height: AppSpacing.section),
             Expanded(child: child),
           ],

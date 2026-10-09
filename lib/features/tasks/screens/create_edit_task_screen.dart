@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../../../widgets/app_sheet.dart';
 import '../../../widgets/form_page.dart';
 import '../../../widgets/labeled_text_field.dart';
-import '../../../widgets/option_picker_sheet.dart';
 import '../../../widgets/picker_field.dart';
 import '../../../data/repositories/member_repository.dart';
 import '../../members/member.dart' show Member;
@@ -35,7 +34,6 @@ class _CreateEditTaskScreenState extends State<CreateEditTaskScreen> {
   DateTime? _dueDate;
   late TaskPriority _priority;
   late TaskStatus _status;
-  late SlaStatus _sla;
   bool _saving = false;
 
   bool get _isEditing => widget.task != null;
@@ -53,7 +51,6 @@ class _CreateEditTaskScreenState extends State<CreateEditTaskScreen> {
     _assignee = t?.assignee;
     _priority = t?.priority ?? TaskPriority.medium;
     _status = t?.status ?? TaskStatus.todo;
-    _sla = t?.sla ?? SlaStatus.onTrack;
   }
 
   Future<void> _pickAssignee(FormFieldState<String> field) async {
@@ -78,16 +75,6 @@ class _CreateEditTaskScreenState extends State<CreateEditTaskScreen> {
       setState(() => _assignee = name);
       field.didChange(name);
     }
-  }
-
-  Future<void> _pickSla() async {
-    final picked = await showOptionPickerSheet<SlaStatus>(
-      context,
-      title: 'SLA status',
-      options: [for (final s in SlaStatus.values) (s, s.label)],
-      selected: _sla,
-    );
-    if (picked != null) setState(() => _sla = picked);
   }
 
   @override
@@ -127,7 +114,6 @@ class _CreateEditTaskScreenState extends State<CreateEditTaskScreen> {
       dueDate: _dueDate!,
       priority: _priority,
       status: _status,
-      sla: _sla,
     );
 
     try {
@@ -217,10 +203,6 @@ class _CreateEditTaskScreenState extends State<CreateEditTaskScreen> {
               selected: _status,
               onChanged: (s) => setState(() => _status = s),
             ),
-          ),
-          LabeledField(
-            label: 'SLA status (set manually for now)',
-            child: PickerField(text: _sla.label, onTap: _pickSla),
           ),
         ],
       ),

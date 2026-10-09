@@ -47,18 +47,7 @@ class _TaskDetailsScreenState extends State<TaskDetailsScreen> {
     );
     if (picked == null || picked == _task.status) return;
 
-    // A completed task is classified Completed. Reopening it resets the SLA
-    // status to On Track until the automatic SLA logic takes over.
-    final SlaStatus newSla;
-    if (picked == TaskStatus.completed) {
-      newSla = SlaStatus.completed;
-    } else if (_task.sla == SlaStatus.completed) {
-      newSla = SlaStatus.onTrack;
-    } else {
-      newSla = _task.sla;
-    }
-
-    final updated = _task.copyWith(status: picked, sla: newSla);
+    final updated = _task.copyWith(status: picked);
     try {
       await _repository.update(updated);
       if (!mounted) return;

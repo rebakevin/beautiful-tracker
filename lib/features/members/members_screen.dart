@@ -4,6 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../data/repositories/member_repository.dart';
+import '../tasks/data/task_repository.dart';
+import '../tasks/models/task.dart' show SlaStatus, Task;
 import 'add_member_screen.dart';
 import 'member.dart';
 import 'member_details_screen.dart';
@@ -13,26 +15,40 @@ class MembersScreen extends StatefulWidget {
   const MembersScreen({super.key});
 
   @override
-  State<MembersScreen> createState() => _MembersScreenState();
+  State<MembersScreen> createState() => MembersScreenState();
 }
 
-class _MembersScreenState extends State<MembersScreen> {
+class MembersScreenState extends State<MembersScreen> {
   final _repository = const MemberRepository();
+  final _taskRepository = TaskRepository();
   List<Member> _members = [];
   bool _loading = true;
 
   @override
   void initState() {
     super.initState();
-    _load();
+    reload();
   }
 
-  Future<void> _load() async {
+  /// Refreshes the member list and each member's task count. Exposed so the
+  /// shell can reload it when the Members tab is (re)selected.
+  Future<void> reload() async {
     try {
       final members = await _repository.fetchAll();
+      final tasks = await _taskRepository.getAll();
+      final byAssignee = <String, List<Task>>{};
+      for (final task in tasks) {
+        byAssignee.putIfAbsent(task.assignee, () => []).add(task);
+      }
       if (!mounted) return;
       setState(() {
-        _members = members;
+        _members = [
+          for (final member in members)
+            member.copyWith(
+              taskCount: byAssignee[member.name]?.length ?? 0,
+              statuses: _statusCounts(byAssignee[member.name] ?? const []),
+            ),
+        ];
         _loading = false;
       });
     } catch (error) {
@@ -42,12 +58,28 @@ class _MembersScreenState extends State<MembersScreen> {
     }
   }
 
+  List<TaskStatusCount> _statusCounts(List<Task> tasks) {
+    int countOf(bool Function(Task) matches) =>
+        tasks.where(matches).length;
+    final result = <TaskStatusCount>[];
+    for (final status in TaskStatus.values) {
+      final count = switch (status) {
+        TaskStatus.overdue => countOf((t) => t.sla == SlaStatus.overdue),
+        TaskStatus.atRisk => countOf((t) => t.sla == SlaStatus.atRisk),
+        TaskStatus.onTrack => countOf((t) => t.sla == SlaStatus.onTrack),
+        TaskStatus.done => countOf((t) => t.sla == SlaStatus.completed),
+      };
+      if (count > 0) result.add(TaskStatusCount(status, count));
+    }
+    return result;
+  }
+
   Future<void> _openAddMember() async {
     final added = await Navigator.of(context).push<Member>(
       MaterialPageRoute<Member>(builder: (_) => const AddMemberScreen()),
     );
     if (added != null) {
-      await _load();
+      await reload();
     }
   }
 
@@ -57,7 +89,7 @@ class _MembersScreenState extends State<MembersScreen> {
         builder: (_) => MemberDetailsScreen(member: member),
       ),
     );
-    await _load();
+    await reload();
   }
 
   @override

@@ -1,9 +1,8 @@
 import '../../core/utils/password_hasher.dart';
 import '../models/app_user.dart';
+import '../repositories/member_repository.dart';
 import '../repositories/user_repository.dart';
 
-/// Which form field an [AccountException] belongs to, so the screen can show
-/// the message under the right input.
 enum AccountField { email, password, currentPassword }
 
 class AccountException implements Exception {
@@ -16,15 +15,15 @@ class AccountException implements Exception {
   String toString() => message;
 }
 
-/// Account rules for sign-in, sign-up and profile changes. There is no
-/// backend: accounts live in the local `users` table.
-///
 /// Inputs are expected to have passed form validation already; this class
 /// only enforces rules that need the database.
 class AccountService {
-  AccountService({UserRepository? users}) : _users = users ?? UserRepository();
+  AccountService({UserRepository? users, MemberRepository? members})
+    : _users = users ?? UserRepository(),
+      _members = members ?? const MemberRepository();
 
   final UserRepository _users;
+  final MemberRepository _members;
 
   /// Demo sign-in, as described on the sign-in screen: any valid email and a
   /// 6+ character password works. If the email already has an account the
@@ -45,6 +44,8 @@ class AccountService {
     if (!ok) {
       throw const AccountException(AccountField.password, 'Incorrect password');
     }
+    // Accounts made before members existed have no member row yet.
+    await _members.ensureExists(name: existing.name, email: existing.email);
     return existing;
   }
 
@@ -75,6 +76,11 @@ class AccountService {
     }
     final updated = user.copyWith(name: name.trim(), email: email.trim());
     await _users.update(updated);
+    await _members.syncProfile(
+      oldEmail: user.email,
+      name: updated.name,
+      email: updated.email,
+    );
     return updated;
   }
 
@@ -111,9 +117,9 @@ class AccountService {
 
   Future<AppUser?> findById(int id) => _users.findById(id);
 
-  Future<AppUser> _create(String name, String email, String password) {
+  Future<AppUser> _create(String name, String email, String password) async {
     final salt = PasswordHasher.newSalt();
-    return _users.insert(
+    final user = await _users.insert(
       AppUser(
         name: name,
         email: email.trim(),
@@ -122,9 +128,10 @@ class AccountService {
         createdAt: DateTime.now(),
       ),
     );
+    await _members.ensureExists(name: user.name, email: user.email);
+    return user;
   }
 
-  /// "kevin.rebakure@team.dev" -> "Kevin Rebakure".
   static String nameFromEmail(String email) {
     final local = email.trim().split('@').first;
     final words = local

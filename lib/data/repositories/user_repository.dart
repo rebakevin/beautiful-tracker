@@ -27,7 +27,6 @@ class UserRepository {
   Future<AppUser?> findByEmail(String email) =>
       _findOne(where: 'email = ?', args: [email.trim()]);
 
-  /// Whether [email] belongs to an account other than [exceptId].
   Future<bool> emailTaken(String email, {int? exceptId}) async {
     final user = await findByEmail(email);
     return user != null && user.id != exceptId;

@@ -20,7 +20,6 @@ Future<PreferencesService> _prefs([Map<String, Object> values = const {}]) {
   return PreferencesService.load();
 }
 
-/// Phone-sized test screen (412 x 915 logical pixels).
 void _usePhoneScreen(WidgetTester tester) {
   tester.view.physicalSize = const Size(1236, 2745);
   tester.view.devicePixelRatio = 3;

@@ -2,8 +2,6 @@ import 'package:flutter/widgets.dart';
 
 import '../../data/models/app_user.dart';
 
-/// Actions that change the app-wide session. Implemented by the root app
-/// state, which calls setState() and persists the change.
 abstract interface class SessionController {
   void signedIn(AppUser user);
   void userUpdated(AppUser user);
@@ -11,11 +9,6 @@ abstract interface class SessionController {
   Future<void> setDarkMode(bool enabled);
 }
 
-/// Makes the signed-in user and theme setting available to every screen
-/// without passing them through each constructor.
-///
-/// Widgets that call [SessionScope.of] rebuild automatically when the user or
-/// dark mode changes.
 class SessionScope extends InheritedWidget {
   const SessionScope({
     super.key,

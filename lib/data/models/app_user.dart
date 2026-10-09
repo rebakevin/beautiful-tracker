@@ -1,4 +1,3 @@
-/// A local account. Stored in the `users` table.
 class AppUser {
   const AppUser({
     this.id,
@@ -16,7 +15,6 @@ class AppUser {
   final String passwordSalt;
   final DateTime createdAt;
 
-  /// Up to two initials for the avatar, e.g. "Kevin Rebakure" → "KR".
   String get initials {
     final parts = name.trim().split(RegExp(r'\s+')).where((p) => p.isNotEmpty);
     final letters = parts.take(2).map((p) => p[0].toUpperCase()).join();

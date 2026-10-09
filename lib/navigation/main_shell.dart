@@ -6,8 +6,6 @@ import '../features/members/members_screen.dart';
 import '../features/profile/profile_screen.dart';
 import '../features/tasks/tasks_screen.dart';
 
-/// Root screen after sign-in: hosts the four main tabs behind a bottom
-/// navigation bar.
 class MainShell extends StatefulWidget {
   const MainShell({super.key});
 

@@ -13,7 +13,6 @@ class PreferencesService {
   static const _currentUserIdKey = 'current_user_id';
   static const _darkModeKey = 'dark_mode';
 
-  /// Signed-in user, or null when signed out.
   int? get currentUserId => _prefs.getInt(_currentUserIdKey);
 
   Future<void> setCurrentUserId(int? id) => id == null

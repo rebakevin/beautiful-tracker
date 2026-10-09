@@ -1,5 +1,3 @@
-/// Form field validators. Each returns an error message, or null when valid.
-/// Messages match design/design.html.
 class Validators {
   Validators._();
 

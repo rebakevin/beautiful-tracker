@@ -16,7 +16,6 @@ class BeautifulTrackerApp extends StatefulWidget {
 
   final PreferencesService preferences;
 
-  /// User restored from the saved session, if any.
   final AppUser? initialUser;
 
   @override
@@ -71,8 +70,6 @@ class _BeautifulTrackerAppState extends State<BeautifulTrackerApp>
   }
 }
 
-/// Shows the sign-in flow or the main app depending on the session. It reads
-/// [SessionScope], so it rebuilds itself whenever the user signs in or out.
 class _AuthGate extends StatelessWidget {
   const _AuthGate();
 

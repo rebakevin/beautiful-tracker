@@ -7,8 +7,6 @@ import '../core/theme/app_colors.dart';
 OverlayEntry? _current;
 Timer? _timer;
 
-/// Short dark pill message near the bottom of the screen, e.g. "Task saved".
-///
 /// Uses the root overlay, so it stays visible when the current screen closes
 /// right after showing it (for example after saving a form).
 void showToast(BuildContext context, String message) {

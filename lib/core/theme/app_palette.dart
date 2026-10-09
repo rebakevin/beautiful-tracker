@@ -20,40 +20,28 @@ class AppPalette extends ThemeExtension<AppPalette> {
     required this.accent,
   });
 
-  /// App background.
   final Color ground;
 
-  /// Cards, inputs, navigation, sheets.
   final Color surface;
 
-  /// Primary text and icons.
   final Color ink;
 
-  /// Labels, secondary text.
   final Color ink2;
 
-  /// Captions, descriptions, inactive tab.
   final Color muted;
 
-  /// Card borders, dividers.
   final Color hairline;
 
-  /// Input and button borders.
   final Color border;
 
-  /// Selected chip fill, success card.
   final Color tint;
 
-  /// Row hover / pressed fill.
   final Color wash;
 
-  /// Deep text on green tints.
   final Color deep;
 
-  /// Selected tab pill.
   final Color navPill;
 
-  /// Green used for text, icons, links and the logo.
   final Color accent;
 
   static const light = AppPalette(

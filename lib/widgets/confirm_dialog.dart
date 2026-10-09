@@ -4,8 +4,6 @@ import '../core/theme/app_colors.dart';
 import '../core/theme/app_palette.dart';
 import '../core/theme/app_spacing.dart';
 
-/// Asks the user to confirm an action. Resolves to true only when the
-/// confirm button is tapped.
 Future<bool> showConfirmDialog(
   BuildContext context, {
   required String title,

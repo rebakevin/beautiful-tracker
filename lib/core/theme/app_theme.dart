@@ -31,32 +31,27 @@ class AppTheme {
     );
 
     final textTheme = GoogleFonts.barlowTextTheme(base.textTheme).copyWith(
-      // Page title
       headlineMedium: GoogleFonts.barlow(
         fontSize: 30,
         fontWeight: FontWeight.w700,
         letterSpacing: -0.4,
         color: p.ink,
       ),
-      // Profile name
       headlineSmall: GoogleFonts.barlow(
         fontSize: 24,
         fontWeight: FontWeight.w700,
         color: p.ink,
       ),
-      // Section heading, dialog title
       titleLarge: GoogleFonts.barlow(
         fontSize: 19,
         fontWeight: FontWeight.w700,
         color: p.ink,
       ),
-      // Card title / button / row label
       titleMedium: GoogleFonts.barlow(
         fontSize: 16,
         fontWeight: FontWeight.w600,
         color: p.ink,
       ),
-      // Field label
       labelLarge: GoogleFonts.barlow(
         fontSize: 14,
         fontWeight: FontWeight.w600,
@@ -200,7 +195,6 @@ class AppTheme {
     );
   }
 
-  /// Brand font for logo and screen headlines (Barlow Condensed 700).
   static TextStyle brand({double size = 24, Color? color}) =>
       GoogleFonts.barlowCondensed(
         fontSize: size,

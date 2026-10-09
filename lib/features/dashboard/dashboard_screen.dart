@@ -142,6 +142,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   const SizedBox(width: AppSpacing.md),
                   InitialsAvatar(
                     initials: user.initials,
+                    imagePath: user.avatarPath,
                     size: 46,
                     background: AppColors.yellow400,
                     foreground: AppColors.brownInk,

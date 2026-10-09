@@ -67,6 +67,7 @@ class AccountService {
     AppUser user, {
     required String name,
     required String email,
+    required String? avatarPath,
   }) async {
     if (await _users.emailTaken(email, exceptId: user.id)) {
       throw const AccountException(
@@ -74,7 +75,12 @@ class AccountService {
         'An account with this email already exists',
       );
     }
-    final updated = user.copyWith(name: name.trim(), email: email.trim());
+    final updated = user.copyWith(
+      name: name.trim(),
+      email: email.trim(),
+      avatarPath: avatarPath,
+      clearAvatar: avatarPath == null,
+    );
     await _users.update(updated);
     await _members.syncProfile(
       oldEmail: user.email,

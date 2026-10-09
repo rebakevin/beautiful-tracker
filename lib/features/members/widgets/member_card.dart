@@ -24,7 +24,7 @@ class MemberCard extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              MemberAvatar(initials: member.initials),
+              MemberAvatar(initials: member.initials, email: member.email),
               const SizedBox(width: AppSpacing.md),
               Expanded(child: _Details(member: member)),
               const SizedBox(width: AppSpacing.sm),

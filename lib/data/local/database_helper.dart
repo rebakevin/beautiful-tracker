@@ -15,7 +15,7 @@ class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._();
 
   static const _databaseName = 'beautiful_tracker.db';
-  static const _version = 4;
+  static const _version = 5;
 
   Database? _database;
 
@@ -85,6 +85,7 @@ class DatabaseHelper {
       )
     '''),
     4: TaskTable.create,
+    5: (db) => db.execute('ALTER TABLE users ADD COLUMN avatar_path TEXT'),
   };
 
   Future<void> close() async {

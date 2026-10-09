@@ -21,6 +21,7 @@ class LabeledTextField extends StatefulWidget {
     this.autofillHints,
     this.onFieldSubmitted,
     this.enabled = true,
+    this.maxLines = 1,
   });
 
   final String label;
@@ -36,6 +37,7 @@ class LabeledTextField extends StatefulWidget {
   final Iterable<String>? autofillHints;
   final ValueChanged<String>? onFieldSubmitted;
   final bool enabled;
+  final int maxLines;
 
   @override
   State<LabeledTextField> createState() => _LabeledTextFieldState();
@@ -64,6 +66,7 @@ class _LabeledTextFieldState extends State<LabeledTextField> {
           forceErrorText: widget.errorText,
           onChanged: widget.onChanged,
           obscureText: obscured,
+          maxLines: obscured ? 1 : widget.maxLines,
           enableSuggestions: !widget.obscureText,
           autocorrect: !widget.obscureText,
           keyboardType: widget.keyboardType,

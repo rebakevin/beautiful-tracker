@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../data/repositories/member_repository.dart';
+import '../../widgets/confirm_dialog.dart';
 import '../../widgets/empty_state.dart';
 import '../../widgets/screen_top_bar.dart';
 import 'add_member_screen.dart';
@@ -51,43 +52,14 @@ class _MemberDetailsScreenState extends State<MemberDetailsScreen> {
   }
 
   Future<void> _confirmRemove() async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Remove member'),
-        content: Text('Remove ${_member.name} from the team?'),
-        actions: [
-          OutlinedButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            style: OutlinedButton.styleFrom(
-              foregroundColor: AppColors.ink,
-              backgroundColor: AppColors.surface,
-              side: const BorderSide(color: AppColors.hairline),
-              shape: const StadiumBorder(),
-              textStyle: GoogleFonts.barlow(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            style: FilledButton.styleFrom(
-              backgroundColor: AppColors.danger,
-              foregroundColor: Colors.white,
-              shape: const StadiumBorder(),
-              textStyle: GoogleFonts.barlow(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            child: const Text('Remove'),
-          ),
-        ],
-      ),
+    final confirmed = await showConfirmDialog(
+      context,
+      title: 'Remove member',
+      message: 'Remove ${_member.name} from the team?',
+      confirmLabel: 'Remove',
+      destructive: true,
     );
-    if (confirmed != true || !mounted) return;
+    if (!confirmed || !mounted) return;
 
     try {
       await _repository.delete(_member.id!);
@@ -164,7 +136,7 @@ class _ProfileHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        MemberAvatar(initials: member.initials, size: 42),
+        MemberAvatar(initials: member.initials, email: member.email, size: 42),
         const SizedBox(width: AppSpacing.md),
         Expanded(
           child: Column(

@@ -10,7 +10,6 @@ import 'member.dart';
 class AddMemberScreen extends StatefulWidget {
   const AddMemberScreen({super.key, this.member});
 
-  /// When set, the screen edits this member instead of creating a new one.
   final Member? member;
 
   @override
